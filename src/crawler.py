@@ -54,22 +54,10 @@ def format_abstract(abstract):
 
     return abstract
 
-def nature():
-    journal_url = "https://www.nature.com"
-    latest_articles_url = "/nature/research"
-
+def __get_article_items(pat_article, reg_exps, journal_url, latest_articles_url):
     ##### get latest articles
     time.sleep(1)
     page = webs.get(journal_url + latest_articles_url)
-
-    ##### get article elements
-    pat_article      = r'<article>[\s\S]+?</article>'
-    pat_title        = r'<a href.+>([\s\S]+?)</a>'
-    pat_url          = r'<a href="(.+?)" '
-    pat_article_type = r'<span data-test="article.type">(.+?)</span>'
-    pat_publish_date = r'<time datetime="(.+?)" itemprop'
-    pat_author       = r'<span itemprop="name">(.+?)</span>'
-
     articles = re.findall(pat_article,page.text)
 
     titles        = []
@@ -78,11 +66,7 @@ def nature():
     dates         = []
     authors       = []
 
-    reg_exps = []
     article_item_list = []
-    
-    #次のforループを回すために取得する項目リストを1つのリストにまとめる
-    reg_exps          += [pat_title, pat_url, pat_article_type, pat_publish_date, pat_author]
     article_item_list += [    titles,    urls,    article_types,            dates,    authors]
 
     ###### get article items
@@ -95,7 +79,7 @@ def nature():
         
         counter += 1
 
-        if counter == 8:
+        if counter == 2:
             break
 
     ##### convert relative urls into absolute urls
@@ -114,8 +98,7 @@ def nature():
     if check_buffer == False:
         #TODO エラーを返すようにしなければならない
         print("the lenghts of article_item_list are not equal")
-
-    #TODO できればここまでを一つの関数として使いまわしたい
+    
     ##### get abstracts of articles
     abstracts = []
     for url in urls:
@@ -123,14 +106,44 @@ def nature():
         time.sleep(1)
         page2 = webs.get(url)
 
-        pat_abstract = r'id="Abs1-content">([\s\S]+?)</p>'
-        abstract = check_items_in_article(re.findall(pat_abstract,page2.text))
+        abstract = check_items_in_article(re.findall(reg_exps[5],page2.text))
         abstract = format_abstract(abstract)
         abstracts.append(abstract)
 
     article_item_list.append(abstracts)
 
     return article_item_list
+
+
+
+def nature():
+    journal_name = 'Nature'
+    journal_url = "https://www.nature.com"
+    latest_articles_url = "/nature/research"
+
+    pat_article      = r'<article>[\s\S]+?</article>'
+    pat_title        = r'<a href.+>([\s\S]+?)</a>'
+    pat_url          = r'<a href="(.+?)" '
+    pat_article_type = r'<span data-test="article.type">(.+?)</span>'
+    pat_publish_date = r'<time datetime="(.+?)" itemprop'
+    pat_author       = r'<span itemprop="name">(.+?)</span>'
+    pat_abstract     = r'id="Abs1-content">([\s\S]+?)</p>'
+
+    reg_exps = []
+    reg_exps          += [pat_title, pat_url, pat_article_type, pat_publish_date, pat_author, pat_abstract]
+
+    item_list = __get_article_items(pat_article, reg_exps, journal_url, latest_articles_url)
+
+    is_new_list = sql.write_article_info_into_database('database/{}.sqlite'.format(journal_name), item_list)
+
+    ##### translation into japanese
+    title_j = tr.translation_english_list(item_list[0], is_new_list)
+    abs_j = tr.translation_english_list(item_list[5], is_new_list)
+
+    article_cards = ar.make_article_cards(item_list, title_j, abs_j, is_new_list)
+
+    return ar.make_journal_card(journal_name, article_cards)
+    
 
 if __name__ == '__main__':
     #article_item_list = [titles, urls, article_types, dates, authors, abstracts]
