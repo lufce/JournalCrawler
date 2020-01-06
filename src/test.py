@@ -1,6 +1,6 @@
-a = ['a', 'b']
+a = []
 
-for i in range(len(a)):
-    a[i] = a[i] + 'x'
+b = ','.join(a)
 
-print(a)
+print(b)
+print(b=='')

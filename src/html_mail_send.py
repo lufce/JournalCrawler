@@ -45,8 +45,9 @@ def html_mailing(subject, html, to=omit):
     if to is omit:
         to = TO_ADDRESS
     
-    msg = create_html_message(to, subject, html)
-    send(FROM_ADDRESS,to, msg)
+    if html != '':
+        msg = create_html_message(to, subject, html)
+        send(FROM_ADDRESS,to, msg)
 
 if __name__ == '__main__':
     html_mailing('html_mail_test','a')

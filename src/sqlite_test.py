@@ -86,7 +86,7 @@ def create_table():
         connection.close()
 
 def write_article_info_into_database(db_path, article_item_list):
-    # article_item_list contains [titles, urls, article_types, dates, authors]
+    # article_item_list contains [titles, urls, article_types, dates, authors, abstract], but do not use abstract
     # database schema is (title UNIQUE, urls UNIQUE, article_type TEXT, date TEXT, authors TEXT)
     # dupulication is detected by database integrity error due to UNIQUE item.
 
@@ -105,7 +105,7 @@ def write_article_info_into_database(db_path, article_item_list):
         c.execute('CREATE TABLE IF NOT EXISTS T_{} (title UNIQUE, url UNIQUE, article_type TEXT, date TEXT, authors TEXT)'.format(yyyymm))
 
     # boolean list for choice articles to be mailed.
-    isNewContents = []
+    is_new_contents = []
 
     list_length = len(article_item_list[0])
 
@@ -119,13 +119,13 @@ def write_article_info_into_database(db_path, article_item_list):
                 ( article_item_list[0][i], article_item_list[1][i], article_item_list[2][i], article_item_list[3][i], article_item_list[4][i] ))
 
             # No exception meands that this article is new one.
-            isNewContents.append(True)
+            is_new_contents.append(True)
 
         except sql.IntegrityError as err:
             if 'UNIQUE' in err.args[0]:
 
                 # if IntegrityError occurs, this article has already been registered.
-                isNewContents.append(False)
+                is_new_contents.append(False)
 
             else:
                 raise Exception
@@ -134,16 +134,16 @@ def write_article_info_into_database(db_path, article_item_list):
 
         c.execute('SELECT * FROM T_{}'.format(yyyymm))
 
-        print('T{} list'.format(yyyymm))
+        print('T_{} list'.format(yyyymm))
         for row in c:
             print(row)
     
-    print(isNewContents)
+    print(is_new_contents)
 
     connection.commit()
     connection.close()
 
-    return isNewContents
+    return is_new_contents
 
 def test_write_article_info_into_database():
     # article_item_list contains [titles, urls, article_types, dates, authors]

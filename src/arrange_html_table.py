@@ -40,7 +40,8 @@ def __join_article_cards(article_card_list):
     article_cards = '\n'.join(article_card_list)
     return article_cards
 
-def make_article_cards(article_item_list, title_j, abs_j):
+def make_article_cards(article_item_list, title_j, abs_j, is_new_list):
+    # if all article is not new, return '' ( empty string ).
     #article_item_list = [titles, urls, article_types, dates, authors, abstracts]
 
     title_e      = article_item_list[0]
@@ -53,37 +54,47 @@ def make_article_cards(article_item_list, title_j, abs_j):
     article_card_list=[]
 
     for i in range(0, len(title_e)):
-        article_card_list.append(__make_article_card(title_e[i], title_j[i], abs_e[i], abs_j[i], authors[i], article_type[i], date[i], url[i]))
+        if is_new_list[i]:
+            article_card_list.append(__make_article_card(title_e[i], title_j[i], abs_e[i], abs_j[i], authors[i], article_type[i], date[i], url[i]))
     
     article_cards = __join_article_cards(article_card_list)
 
     return article_cards
 
 def make_journal_card(journal_title,article_cards):
-    journal_card = '''<table width="{journal_width}" border="{journal_border}" cellpadding="{journal_padding}" cellspacing="{journal_spacing}" bgcolor="{journal_bgcolor}">
-    <tr>
-        <td>
-            <font size="6"><b>{journal_title}</b></font><br>
-            {article_cards}
-        </td>
-    </tr>
-</table>'''.format(journal_width=__JOURNAL_TABLE_WIDHT, journal_border=__JOURNAL_TABLE_BORDER, \
-                   journal_padding=__JOURNAL_TABLE_CELLPAD, journal_spacing=__JOURNAL_TABLE_CELLSPC, \
-                   journal_bgcolor=__JOURNAL_TABLE_BGCOLOR, journal_title=journal_title, article_cards=article_cards)
+    if article_cards == '':
+        return ''
+    else:
 
-    return journal_card
+        journal_card = '''<table width="{journal_width}" border="{journal_border}" cellpadding="{journal_padding}" cellspacing="{journal_spacing}" bgcolor="{journal_bgcolor}">
+        <tr>
+            <td>
+                <font size="6"><b>{journal_title}</b></font><br>
+                {article_cards}
+            </td>
+        </tr>
+        </table>'''.format(journal_width=__JOURNAL_TABLE_WIDHT, journal_border=__JOURNAL_TABLE_BORDER, \
+                    journal_padding=__JOURNAL_TABLE_CELLPAD, journal_spacing=__JOURNAL_TABLE_CELLSPC, \
+                    journal_bgcolor=__JOURNAL_TABLE_BGCOLOR, journal_title=journal_title, article_cards=article_cards)
+
+        return journal_card
 
 def wrap_html_tags(journal_cards):
-    html_text = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-    <head></head>
-    <body>
-    {}
-    </body>
-</html>
-    '''.format(journal_cards)
+    if journal_cards == '':
+        return ''
 
-    return html_text
+    else:
+
+        html_text = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        <html>
+        <head></head>
+        <body>
+        {}
+        </body>
+        </html>
+        '''.format(journal_cards)
+
+        return html_text
 
 def test():
     article_card_list = []

@@ -5,6 +5,8 @@ import lxml.html
 import arrange_html_table as ar
 import translation as tr
 import html_mail_send as mailing
+import sqlite_test as sql
+
 
 text_writter_file_name = 'nature_latest_research.txt'
 html_pickle_name = 'html_content_pickle.binf'
@@ -93,7 +95,7 @@ def nature():
         
         counter += 1
 
-        if counter == 3:
+        if counter == 8:
             break
 
     ##### convert relative urls into absolute urls
@@ -135,10 +137,12 @@ if __name__ == '__main__':
 
     item_list = nature()
 
-    title_j = tr.translation_english_list(item_list[0])
-    abs_j = tr.translation_english_list(item_list[5])
+    is_new_list = sql.write_article_info_into_database('database/nature.sqlite', item_list)
 
-    article_cards = ar.make_article_cards(item_list, title_j, abs_j)
+    title_j = tr.translation_english_list(item_list[0], is_new_list)
+    abs_j = tr.translation_english_list(item_list[5], is_new_list)
+
+    article_cards = ar.make_article_cards(item_list, title_j, abs_j, is_new_list)
     journal_card = ar.make_journal_card('Nature', article_cards)
     html_text = ar.wrap_html_tags(journal_card)
     
