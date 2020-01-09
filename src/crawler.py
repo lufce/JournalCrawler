@@ -130,7 +130,7 @@ def nature():
     pat_abstract     = r'id="Abs1-content">([\s\S]+?)</p>'
 
     reg_exps = []
-    reg_exps          += [pat_title, pat_url, pat_article_type, pat_publish_date, pat_author, pat_abstract]
+    reg_exps += [pat_title, pat_url, pat_article_type, pat_publish_date, pat_author, pat_abstract]
 
     item_list = __get_article_items(pat_article, reg_exps, journal_url, latest_articles_url)
 
