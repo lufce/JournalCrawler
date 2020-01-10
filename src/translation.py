@@ -12,17 +12,25 @@ def translation_en_into_ja(en_str):
     else:
         return 'translation failed. status_code:{}'.format(res.status_code)
 
-def translation_english_list(en_list, is_new_list):
+def translation_english_list(en_list, is_new_list=None):
     ja_list = []
 
-    if isinstance(en_list, list) == False:
+    #if en_list is not list but a single string, make new en_list containing the one string.
+    if isinstance(en_list, str) == True:
         buf = en_list
         
         en_list = []
         en_list.append(buf)
 
+    #if is_new_list is not given, all sentences in en_list are translated.
+    if is_new_list is None:
+        is_new_list = []
+        for i in range(len(en_list)):    
+            is_new_list.append(True)
+
     for i in range(len(en_list)):
         if is_new_list[i]:
+            print(i)
             ja_list.append( translation_en_into_ja(en_list[i]) )
         else:
             ja_list.append('')
