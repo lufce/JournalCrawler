@@ -44,6 +44,7 @@ def __previous_yyyymm(date):
     if len(mm) == 1:
         mm = '0' + mm
 
+'''
 def __create_table():
     try:
 
@@ -82,6 +83,7 @@ def __create_table():
         print(err.args[0])
     finally:
         connection.close()
+'''
 
 def write_article_info_into_database(db_path, article_item_list):
     # article_item_list contains [titles, urls, article_types, dates, authors, abstract], but do not use abstract
