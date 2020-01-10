@@ -3,17 +3,15 @@ import time
 
 import os
 
-dbpath = 'database/sqlite_test.sqlite'
-
-def get_yyyymm_from_date(date):
+def __get_yyyymm_from_date(date):
     #date format is yyyy-mm-dd
     return(date[:4]+date[5:7])
 
-def get_yyyymm_list(date_list):
+def __get_yyyymm_list(date_list):
     yyyymm_list = []
     
     for date in date_list:
-        yyyymm = get_yyyymm_from_date(date)
+        yyyymm = __get_yyyymm_from_date(date)
 
         if len(yyyymm_list) == 0:
             yyyymm_list.append(yyyymm)
@@ -30,7 +28,7 @@ def get_yyyymm_list(date_list):
     
     return yyyymm_list
 
-def previous_yyyymm(date):
+def __previous_yyyymm(date):
     yy = int( date[:4])
     mm = int( date[5:7])
 
@@ -46,7 +44,7 @@ def previous_yyyymm(date):
     if len(mm) == 1:
         mm = '0' + mm
 
-def create_table():
+def __create_table():
     try:
 
         connection = sql.connect(dbpath)
@@ -91,7 +89,7 @@ def write_article_info_into_database(db_path, article_item_list):
     # dupulication is detected by database integrity error due to UNIQUE item.
 
     # yyyymm like 201903 is used as a table name.
-    yyyymm_list = get_yyyymm_list(article_item_list[3])
+    yyyymm_list = __get_yyyymm_list(article_item_list[3])
 
     if len(yyyymm_list) > 10:
         # large viriaty of yyyymm list indicates wrong list reference.
@@ -112,7 +110,7 @@ def write_article_info_into_database(db_path, article_item_list):
     for i in range(list_length):
         
         # get table_name for entry of the article
-        yyyymm = get_yyyymm_from_date(article_item_list[3][i])
+        yyyymm = __get_yyyymm_from_date(article_item_list[3][i])
 
         try:
             c.execute('INSERT INTO T_{} (title, url, article_type, date, authors) VALUES (?,?,?,?,?)'.format(yyyymm), \
@@ -145,8 +143,10 @@ def write_article_info_into_database(db_path, article_item_list):
 
     return is_new_contents
 
-def test_write_article_info_into_database():
+def __test_write_article_info_into_database():
     # article_item_list contains [titles, urls, article_types, dates, authors]
+    dbpath = 'database/sqlite_test.sqlite'
+
     title = ['A','D','E']
     url = ['A','D','E']
     types = ['A','D','E']
@@ -158,4 +158,4 @@ def test_write_article_info_into_database():
     write_article_info_into_database(dbpath,ar_list)
 
 if __name__ == '__main__':
-    test_write_article_info_into_database()
+    __test_write_article_info_into_database()
