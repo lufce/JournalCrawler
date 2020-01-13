@@ -4,7 +4,7 @@ import article.article as article_module
 import translation
 
 class Journal_Template:
-    articles = []
+    article_list = []
 
     pat_article = ''
     pat_title = ''
@@ -49,7 +49,7 @@ class Journal_Template:
         else:
             return ""
 
-    def get_articles(self):
+    def store_article_list(self):
         ##### get latest articles
         #self.reg_exps += [pat_title, pat_url, pat_article_kind, pat_publish_date, pat_author, pat_abstract]
         time.sleep(1)
@@ -70,18 +70,18 @@ class Journal_Template:
 
             a.title_j = translation.translation_en_into_ja(a.title_e)
 
-            self.articles.append(a)
+            self.article_list.append(a)
             counter += 1
 
             if counter == 5:
                 break
 
         ##### convert relative urls into absolute urls, and rewrite url items
-        for a in self.articles:
+        for a in self.article_list:
             a.url = self.journal_url + a.url
         
         ##### get abstracts of articles
-        for a in self.articles:
+        for a in self.article_list:
 
             time.sleep(1)
             page2 = webs.get(a.url)
@@ -90,6 +90,4 @@ class Journal_Template:
             abstract = article_module.format_abstract(abstract)
             
             a.abstract_e = abstract
-            a.abstract_j = translation.translation_en_into_ja(a.abstract_e)
-
-            
+            a.abstract_j = translation.translation_en_into_ja(a.abstract_e)         

@@ -1,4 +1,4 @@
-from article.article import Aritcle
+import article.article as article_module
 
 ##### settings
 
@@ -154,21 +154,7 @@ def wrap_html_tags(journal_cards):
 #         f.write(journal_card)
 
 def test():
-    article_list = []
-
-    for i in range(1,4):
-        a = Aritcle()
-
-        a.title_e = 'title {}'.format(i)
-        a.title_j = 'タイトル {}'.format(i)
-        a.abstract_e = 'abstract {}'.format(i)
-        a.abstract_j = '要約 {}'.format(i)
-        a.authors = 'author1, author2, author3'
-        a.kind = 'article'
-        a.date = '2019-12-12'
-        a.url = 'https://www.nature.com/articles/s41586-019-1799-6'
-
-        article_list.append(a)
+    article_list = article_module.create_dummy_article_list(3)
 
     is_new_list = [True,False,True]
     article_cards = make_article_cards(article_list,is_new_list)
