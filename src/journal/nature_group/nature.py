@@ -7,6 +7,7 @@ class Nature(Journal_Template):
         journal_name = 'Nature'
         journal_url = "https://www.nature.com"
         latest_articles_url = "/nature/research"
+        db_path = 'database/{}.sqlite'.format(journal_name)
 
         pat_article      = r'<article>[\s\S]+?</article>'
         pat_title        = r'<a href.+>([\s\S]+?)</a>'
@@ -16,4 +17,4 @@ class Nature(Journal_Template):
         pat_authors      = r'<span itemprop="name">(.+?)</span>'
         pat_abstract     = r'id="Abs1-content">([\s\S]+?)</p>'
 
-        super().__init__(journal_name, journal_url, latest_articles_url, pat_article, pat_title, pat_url, pat_article_kind, pat_publish_date, pat_authors, pat_abstract)
+        super().__init__(journal_name, journal_url, latest_articles_url, pat_article, pat_title, pat_url, pat_article_kind, pat_publish_date, pat_authors, pat_abstract, db_path)

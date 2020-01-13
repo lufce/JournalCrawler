@@ -98,7 +98,7 @@ def make_article_cards(article_list, is_new_list):
 
 #     return article_cards
 
-def make_journal_card(journal_title,article_cards):
+def make_journal_card(journal_name,article_cards):
     if article_cards == '':
         return ''
     else:
@@ -112,7 +112,7 @@ def make_journal_card(journal_title,article_cards):
         </tr>
         </table>'''.format(journal_width=__JOURNAL_TABLE_WIDHT, journal_border=__JOURNAL_TABLE_BORDER, \
                     journal_padding=__JOURNAL_TABLE_CELLPAD, journal_spacing=__JOURNAL_TABLE_CELLSPC, \
-                    journal_bgcolor=__JOURNAL_TABLE_BGCOLOR, journal_title=journal_title, article_cards=article_cards)
+                    journal_bgcolor=__JOURNAL_TABLE_BGCOLOR, journal_title=journal_name, article_cards=article_cards)
 
         return journal_card
 

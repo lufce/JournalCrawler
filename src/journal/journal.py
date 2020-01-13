@@ -17,23 +17,25 @@ class Journal_Template:
     journal_name = ''
     journal_url = ''
     latest_articles_url = ''
+    journal_database_path = ''
 
     def __init__(self, journal_name, journal_url, latest_articles_url, \
                  pat_article, pat_title, pat_url, pat_article_kind, \
-                 pat_publish_date, pat_authors, pat_abstract):
+                 pat_publish_date, pat_authors, pat_abstract, db_path):
         
         self.pat_article = pat_article
 
         self.pat_title = pat_title
         self.pat_url = pat_url
-        self.pat_article_type = pat_article_kind
+        self.pat_article_kind = pat_article_kind
         self.pat_publish_date = pat_publish_date
-        self.pat_author = pat_authors
+        self.pat_authors = pat_authors
         self.pat_abstract = pat_abstract
         
         self.journal_name = journal_name
         self.journal_url = journal_url
         self.latest_articles_url = latest_articles_url
+        self.sql_database_path = db_path
 
     def article_url (self):
         return self.journal_url + self.latest_articles_url
@@ -51,7 +53,6 @@ class Journal_Template:
 
     def store_article_list(self):
         ##### get latest articles
-        #self.reg_exps += [pat_title, pat_url, pat_article_kind, pat_publish_date, pat_author, pat_abstract]
         time.sleep(1)
         page = webs.get(self.journal_url + self.latest_articles_url)
         aritcle_htmls = re.findall(self.pat_article, page.text)
@@ -68,8 +69,10 @@ class Journal_Template:
             a.date    = self.__check_items_in_article(re.findall( self.pat_publish_date, html))
             a.authors = self.__check_items_in_article(re.findall( self.pat_authors,      html))
 
-            a.title_j = translation.translation_en_into_ja(a.title_e)
+            a.title_e = article_module.format_text(a.title_e)
 
+            a.title_j = translation.translation_en_into_ja(a.title_e)
+            
             self.article_list.append(a)
             counter += 1
 

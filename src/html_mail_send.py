@@ -9,7 +9,7 @@ TO_ADDRESS   = (os.environ['TO_ADDRESS'])
 #CHARSET      = "ISO-2022-JP"
 CHARSET      = "utf-8"
 
-def create_html_message(to, sbj, html):
+def __create_html_message(to, sbj, html):
     
     msg = MIMEMultipart('alternative')
 
@@ -31,7 +31,7 @@ def create_html_message(to, sbj, html):
 
     return msg
     
-def send(from_adr, to_adr, msg):
+def __send(from_adr, to_adr, msg):
     smtpobj = smtplib.SMTP('smtp.live.com', 587)
     smtpobj.ehlo()
     smtpobj.starttls()
@@ -46,8 +46,8 @@ def html_mailing(subject, html, to=omit):
         to = TO_ADDRESS
     
     if html != '':
-        msg = create_html_message(to, subject, html)
-        send(FROM_ADDRESS,to, msg)
+        msg = __create_html_message(to, subject, html)
+        __send(FROM_ADDRESS,to, msg)
 
 if __name__ == '__main__':
     html_mailing('html_mail_test','a')
