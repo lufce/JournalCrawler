@@ -1,8 +1,10 @@
 import re, time
 import requests as webs
+import article.article as article_module
 
 class Journal_Template:
-    
+    articles = []
+
     reg_exps = []
     pat_article = ''
     pat_title = ''
@@ -35,6 +37,9 @@ class Journal_Template:
 
         self.reg_exps += [pat_title, pat_url, pat_article_type, pat_publish_date, pat_author, pat_abstract]
 
+    def article_url (self):
+        return self.journal_url + self.latest_articles_url
+
     def __check_items_in_article(self, item_list):
 
         if len(item_list) > 1:
@@ -46,99 +51,40 @@ class Journal_Template:
         else:
             return ""
 
-    def __format_text(self, text):
-        #replace newline with space
-        text = re.sub(r'\n', " ", text)
-
-        #replace sequential space with single space
-        text = re.sub(r'\s+', " ", text)
-
-        #delete spaces at start of string
-        text = re.sub(r'^\s+', "", text)
-
-        #delete space before period
-        text = re.sub(r'\s+\.', ".", text)
-
-        #delete space before comma
-        text = re.sub(r'\s+\,', ",", text)
-
-        return text
-
-    def __format_abstract(self, abstract):
-
-        #delete reference number
-        abstract = re.sub(r'<sup>[\s\S]+?</sup>',"",abstract)
-
-        #delete html tag
-        abstract = re.sub(r'<.+?>', "" ,abstract)
-
-        abstract = re.sub(r'\s+?', " ", abstract)
-        abstract = re.sub(r'\s+?\.', ".", abstract)
-        abstract = re.sub(r'\s+?\,', ",", abstract)
-
-        return abstract
-
-    def get_article_items(self):
+    def get_articles(self):
         ##### get latest articles
         #self.reg_exps += [pat_title, pat_url, pat_article_type, pat_publish_date, pat_author, pat_abstract]
         time.sleep(1)
         page = webs.get(self.journal_url + self.latest_articles_url)
-        articles = re.findall(self.pat_article, page.text)
-
-        #TODO Articleオブジェクトを作る。
-        titles        = []
-        urls          = []
-        article_types = []
-        dates         = []
-        authors       = []
-
-        article_item_list = []
-        article_item_list += [    titles,    urls,    article_types,            dates,    authors]
+        aritcle_htmls = re.findall(self.pat_article, page.text)
 
         ###### get article items
-
         counter = 0
 
-        for article in articles:
-            for i in range(0, len(article_item_list)):
-                article_item_list[i].append(self.__format_text(self.__check_items_in_article(re.findall(self.reg_exps[i], article))))
+        for html in aritcle_htmls:
+            a = article_module.Aritcle()
+
+            for i in range(a.item_number_except_abstract):
+                item = self.__check_items_in_article(re.findall(self.reg_exps[i], html))
+                a.item_list[i] = article_module.format_text(item)
             
+            self.articles.append(a)
             counter += 1
 
             if counter == 5:
                 break
 
-        ##### convert relative urls into absolute urls
-        for i in range(len(urls)):
-            urls[i] = self.journal_url + urls[i]
-
-        ###### check whether the lengths of item_lists are equal
-        check_buffer = True
-
-        for i in range(0, len(article_item_list)-1):
-            check_buffer = check_buffer and (len(article_item_list[i]) == len(article_item_list[i+1]))
-        
-            if check_buffer == False:
-                break
-
-        if check_buffer == False:
-            #TODO エラーを返すようにしなければならない
-            print("the lenghts of article_item_list are not equal")
+        ##### convert relative urls into absolute urls, and rewrite url items
+        for a in self.articles:
+            a.url = self.journal_url + a.url
         
         ##### get abstracts of articles
-        abstracts = []
-        for url in urls:
+        for a in self.articles:
 
             time.sleep(1)
-            page2 = webs.get(url)
+            page2 = webs.get(a.url)
 
             abstract = self.__check_items_in_article(re.findall(self.reg_exps[5],page2.text))
-            abstract = self.__format_abstract(abstract)
-            abstracts.append(abstract)
-
-        article_item_list.append(abstracts)
-
-        return article_item_list
-
-    def article_url (self):
-        return self.journal_url + self.latest_articles_url
+            abstract = article_module.format_abstract(abstract)
+            
+            a.abstract = abstract
