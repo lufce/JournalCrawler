@@ -1,17 +1,17 @@
 import re, time
 import requests as webs
 import article.article as article_module
+import translation
 
 class Journal_Template:
     articles = []
 
-    reg_exps = []
     pat_article = ''
     pat_title = ''
     pat_url = ''
-    pat_article_type = ''
+    pat_article_kind = ''
     pat_publish_date = ''
-    pat_author = ''
+    pat_authors = ''
     pat_abstract = ''
     
     journal_name = ''
@@ -19,23 +19,21 @@ class Journal_Template:
     latest_articles_url = ''
 
     def __init__(self, journal_name, journal_url, latest_articles_url, \
-                 pat_article, pat_title, pat_url, pat_article_type, \
-                 pat_publish_date, pat_author, pat_abstract):
+                 pat_article, pat_title, pat_url, pat_article_kind, \
+                 pat_publish_date, pat_authors, pat_abstract):
         
         self.pat_article = pat_article
 
         self.pat_title = pat_title
         self.pat_url = pat_url
-        self.pat_article_type = pat_article_type
+        self.pat_article_type = pat_article_kind
         self.pat_publish_date = pat_publish_date
-        self.pat_author = pat_author
+        self.pat_author = pat_authors
         self.pat_abstract = pat_abstract
         
         self.journal_name = journal_name
         self.journal_url = journal_url
         self.latest_articles_url = latest_articles_url
-
-        self.reg_exps += [pat_title, pat_url, pat_article_type, pat_publish_date, pat_author, pat_abstract]
 
     def article_url (self):
         return self.journal_url + self.latest_articles_url
@@ -53,7 +51,7 @@ class Journal_Template:
 
     def get_articles(self):
         ##### get latest articles
-        #self.reg_exps += [pat_title, pat_url, pat_article_type, pat_publish_date, pat_author, pat_abstract]
+        #self.reg_exps += [pat_title, pat_url, pat_article_kind, pat_publish_date, pat_author, pat_abstract]
         time.sleep(1)
         page = webs.get(self.journal_url + self.latest_articles_url)
         aritcle_htmls = re.findall(self.pat_article, page.text)
@@ -63,11 +61,15 @@ class Journal_Template:
 
         for html in aritcle_htmls:
             a = article_module.Aritcle()
-
-            for i in range(a.item_number_except_abstract):
-                item = self.__check_items_in_article(re.findall(self.reg_exps[i], html))
-                a.item_list[i] = article_module.format_text(item)
             
+            a.title_e = self.__check_items_in_article(re.findall( self.pat_title,        html))
+            a.url     = self.__check_items_in_article(re.findall( self.pat_url,          html))
+            a.kind    = self.__check_items_in_article(re.findall( self.pat_article_kind, html))
+            a.date    = self.__check_items_in_article(re.findall( self.pat_publish_date, html))
+            a.authors = self.__check_items_in_article(re.findall( self.pat_authors,      html))
+
+            a.title_j = translation.translation_en_into_ja(a.title_e)
+
             self.articles.append(a)
             counter += 1
 
@@ -84,7 +86,10 @@ class Journal_Template:
             time.sleep(1)
             page2 = webs.get(a.url)
 
-            abstract = self.__check_items_in_article(re.findall(self.reg_exps[5],page2.text))
+            abstract = self.__check_items_in_article(re.findall( self.pat_abstract, page2.text))
             abstract = article_module.format_abstract(abstract)
             
-            a.abstract = abstract
+            a.abstract_e = abstract
+            a.abstract_j = translation.translation_en_into_ja(a.abstract_e)
+
+            

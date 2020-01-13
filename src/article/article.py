@@ -33,14 +33,12 @@ def format_abstract(abstract):
     return abstract
 
 class Aritcle:
-    item_number_except_abstract = 5
 
-    title    = ''
-    url      = ''
-    kind     = ''
-    date     = ''
-    authors  = ''
-    abstract = ''
-
-    item_list = []
-    item_list += [title, url, kind, date, authors, abstract]
+    title_e    = ''
+    title_j    = ''
+    url        = ''
+    kind       = ''
+    date       = ''
+    authors    = ''
+    abstract_e = ''
+    abstract_j = ''
