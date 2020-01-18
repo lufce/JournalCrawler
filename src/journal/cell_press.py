@@ -1,4 +1,4 @@
-from src.journal.journal_template import JournalTemplate
+from journal.journal_template import JournalTemplate
 
 class Cell(JournalTemplate):
         
@@ -8,8 +8,8 @@ class Cell(JournalTemplate):
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
 
     pat_article      = r'<section class="toc__section aop__toc">[\s\S]+?</section>'
-    pat_title        = r'<a href="/cell/fulltext/[\s\S]+?" title="([\s\S]+?)">'
-    pat_url          = r'<a href="(/cell/fulltext/[\s\S]+?)"'
+    pat_title        = r'<a href="/[^/]+/fulltext/[\s\S]+?" title="([\s\S]+?)">'
+    pat_url          = r'<a href="(/[^/]+/fulltext/[\s\S]+?)"'
     pat_article_kind = r'<div class="toc__item__type">(.+?)</div>'
     pat_publish_date = r'<div class="toc__item__date">.+?:(.+?)</div>'
     pat_authors      = r'<li class="loa__item">(.+?)[,<]'
@@ -50,3 +50,8 @@ class Cell(JournalTemplate):
 class CancerCell(Cell):
 
     journal_name = 'Cancer Cell'
+    latest_articles_url = "/cancer-cell/newarticles"
+
+class Immunity(Cell):
+    journal_name = 'Immunity'
+    latest_articles_url = "/immunity/newarticles"

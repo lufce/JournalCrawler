@@ -55,9 +55,6 @@ class JournalTemplate:
     def format_abstract(self, abstract):
         #### This method may be overrided for each journals
 
-        #delete reference number
-        abstract = re.sub(r'<sup>[\s\S]+?</sup>',"",abstract)
-
         #delete html tag
         abstract = re.sub(r'<.+?>', "" , abstract)
 

@@ -1,4 +1,5 @@
-from src.journal.journal_template import JournalTemplate
+from journal.journal_template import JournalTemplate
+import re
 
 class Nature(JournalTemplate):
         
@@ -14,3 +15,22 @@ class Nature(JournalTemplate):
     pat_publish_date = r'<time datetime="(.+?)" itemprop'
     pat_authors      = r'<span itemprop="name">(.+?)</span>'
     pat_abstract     = r'id="Abs1-content">([\s\S]+?)</p>'
+
+
+    def format_abstract(self, abstract):
+        #### This method may be overrided for each journals
+
+        #delete reference number
+        abstract = re.sub(r'<sup>(\d+,)*\d</sup>',"",abstract)
+        abstract = re.sub(r'<sup>\d+</sup>',"",abstract)
+
+        #delete html tag
+        abstract = re.sub(r'<.+?>', "" , abstract)
+
+        abstract = re.sub(r'\n|\r', "", abstract)
+
+        abstract = re.sub(r'\s+', " ", abstract)
+        abstract = re.sub(r'\s+\.', ".", abstract)
+        abstract = re.sub(r'\s+\,', ",", abstract)
+
+        return abstract

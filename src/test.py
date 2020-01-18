@@ -1,9 +1,8 @@
-
-from journal.cell_perss.cell import Cell
+from journal.nature_group import Nature
 import article.article as article_module
 import os
 
-j = Cell()
+j = Nature()
 
 j.store_article_list()
 
