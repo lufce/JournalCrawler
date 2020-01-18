@@ -17,7 +17,7 @@ class Journal_Template:
     journal_name = ''
     journal_url = ''
     latest_articles_url = ''
-    journal_database_path = ''
+    sql_database_path = ''
 
     def __init__(self, journal_name, journal_url, latest_articles_url, \
                  pat_article, pat_title, pat_url, pat_article_kind, \
@@ -40,16 +40,59 @@ class Journal_Template:
     def article_url (self):
         return self.journal_url + self.latest_articles_url
 
-    def __check_items_in_article(self, item_list):
-
-        if len(item_list) > 1:
-            # for items of authors
-            return ', '.join(item_list)
-
-        elif len(item_list) == 1:
-            return item_list[0]
-        else:
+    def check_items_in_article(self, item_list):
+        if len(item_list) == 0:
             return ""
+        else:
+            return item_list[0]
+    
+    def format_item_of_authors(self, item_list):
+        #### This method may be overrided for each journals
+        return ', '.join(item_list)
+
+    def format_text(self, text):
+        #### This method may be overrided for each journals
+
+        #replace newline with space
+        text = re.sub(r'\n', " ", text)
+
+        #replace sequential space with single space
+        text = re.sub(r'\s+', " ", text)
+
+        #delete spaces at start of string
+        text = re.sub(r'^\s+', "", text)
+
+        #delete space before period
+        text = re.sub(r'\s+\.', ".", text)
+
+        #delete space before comma
+        text = re.sub(r'\s+\,', ",", text)
+
+        return text
+
+    def format_abstract(self, abstract):
+        #### This method may be overrided for each journals
+
+        #delete reference number
+        abstract = re.sub(r'<sup>[\s\S]+?</sup>',"",abstract)
+
+        #delete html tag
+        abstract = re.sub(r'<.+?>', "" , abstract)
+
+        abstract = re.sub(r'\n|\r', "", abstract)
+
+        abstract = re.sub(r'\s+', " ", abstract)
+        abstract = re.sub(r'\s+\.', ".", abstract)
+        abstract = re.sub(r'\s+\,', ",", abstract)
+
+        return abstract
+    
+    def format_date(self, date):
+        #### This method should be overrided for each journals
+        #### Date format is yyyy-mm-dd, filling 0 if less digit.
+        #### ex.) 1990-07-01
+
+        return date
 
     def store_article_list(self):
         ##### get latest articles
@@ -63,13 +106,16 @@ class Journal_Template:
         for html in aritcle_htmls:
             a = article_module.Aritcle()
             
-            a.title_e = self.__check_items_in_article(re.findall( self.pat_title,        html))
-            a.url     = self.__check_items_in_article(re.findall( self.pat_url,          html))
-            a.kind    = self.__check_items_in_article(re.findall( self.pat_article_kind, html))
-            a.date    = self.__check_items_in_article(re.findall( self.pat_publish_date, html))
-            a.authors = self.__check_items_in_article(re.findall( self.pat_authors,      html))
+            # get items in article
+            a.title_e = self.check_items_in_article(re.findall( self.pat_title,        html))
+            a.url     = self.check_items_in_article(re.findall( self.pat_url,          html))
+            a.kind    = self.check_items_in_article(re.findall( self.pat_article_kind, html))
+            a.date    = self.check_items_in_article(re.findall( self.pat_publish_date, html))
 
-            a.title_e = article_module.format_text(a.title_e)
+            # format items
+            a.authors = self.format_item_of_authors(re.findall( self.pat_authors,      html))
+            a.title_e = self.format_text(a.title_e)
+            a.date    = self.format_date(a.date)
 
             a.title_j = translation.translation_en_into_ja(a.title_e)
             
@@ -88,9 +134,8 @@ class Journal_Template:
 
             time.sleep(1)
             page2 = webs.get(a.url)
-
-            abstract = self.__check_items_in_article(re.findall( self.pat_abstract, page2.text))
-            abstract = article_module.format_abstract(abstract)
             
-            a.abstract_e = abstract
-            a.abstract_j = translation.translation_en_into_ja(a.abstract_e)         
+            a.abstract_e = self.check_items_in_article(re.findall( self.pat_abstract, page2.text))
+            a.abstract_e = self.format_abstract(a.abstract_e)
+            
+            a.abstract_j = translation.translation_en_into_ja(a.abstract_e)

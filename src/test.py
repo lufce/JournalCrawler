@@ -1,24 +1,10 @@
-'''
-from journal.nature_group.nature import Nature
+
+from journal.cell_perss.cell import Cell
 import article.article as article_module
 import os
 
-n1 = Nature()
+j = Cell()
 
-n1.get_articles()
+j.store_article_list()
 
-print(n1.articles)
-
-'''
-a = 1
-b = 2
-
-l = []
-l += [a,b]
-
-print(l)
-
-l[0]=3
-
-print(a)
-print(l)
+print('end')
