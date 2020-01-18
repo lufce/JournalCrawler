@@ -3,8 +3,13 @@ import requests as webs
 import article.article as article_module
 import translation
 
-class Journal_Template:
+class JournalTemplate:
     article_list = []
+
+    journal_name = ''
+    journal_url = ''
+    latest_articles_url = ''
+    sql_database_path = ''
 
     pat_article = ''
     pat_title = ''
@@ -13,29 +18,6 @@ class Journal_Template:
     pat_publish_date = ''
     pat_authors = ''
     pat_abstract = ''
-    
-    journal_name = ''
-    journal_url = ''
-    latest_articles_url = ''
-    sql_database_path = ''
-
-    def __init__(self, journal_name, journal_url, latest_articles_url, \
-                 pat_article, pat_title, pat_url, pat_article_kind, \
-                 pat_publish_date, pat_authors, pat_abstract, db_path):
-        
-        self.pat_article = pat_article
-
-        self.pat_title = pat_title
-        self.pat_url = pat_url
-        self.pat_article_kind = pat_article_kind
-        self.pat_publish_date = pat_publish_date
-        self.pat_authors = pat_authors
-        self.pat_abstract = pat_abstract
-        
-        self.journal_name = journal_name
-        self.journal_url = journal_url
-        self.latest_articles_url = latest_articles_url
-        self.sql_database_path = db_path
 
     def article_url (self):
         return self.journal_url + self.latest_articles_url
