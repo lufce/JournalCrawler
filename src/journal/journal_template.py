@@ -11,13 +11,13 @@ accept_lang = 'ja,en-US;q=0.9,en;q=0.8,pt;q=0.7'
 ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
 hds = {'Accept':accept,'Accept-Encoding':accept_enc,'Accept-Language':accept_lang,'User-Agent': ua}
 
-counter_limit = 6
-
 class JournalTemplate:
     # クラス変数としてミュータブルなリストを用いると、継承した子のクラスと共有されてしまい、正常に動作しない。
     # なのでTupleにしている。
     article_list = ()
     is_new_article = ()
+
+    counter_limit = -1
 
     search_mode = 0
     crawling_delay = 10
@@ -159,8 +159,8 @@ class JournalTemplate:
 
             counter += 1
 
-            if counter_limit != -1:
-                if counter == counter_limit:
+            if self.counter_limit != -1:
+                if counter == self.counter_limit:
                     break
         
         self.article_list = tuple(reversed(article_list_buf))
@@ -208,7 +208,7 @@ class JournalTemplate:
                 article_list_buf.append(a)
                 logging.info('added a article')
             
-            self.article_list = tuple(reversed(article_list_buf))
+            self.article_list = tuple(article_list_buf)
 
     def __get_article_items3(self):
         ##### get new articles part
@@ -247,17 +247,16 @@ class JournalTemplate:
             a.title_j = translation.translation_en_into_ja(a.title_e)
             
             article_list_buf.append(a)
-            logging.info('added a article')
             counter += 1
+            logging.info('added a article: %s', str(counter))
 
-            if counter_limit != -1:
-                if counter == counter_limit:
+            if self.counter_limit != -1:
+                if counter == self.counter_limit:
                     break
         
         self.article_list = tuple(reversed(article_list_buf))
 
     def get_abstract(self):
-        c = 0
         ##### convert relative urls into absolute urls, and rewrite url items
         for a in self.article_list:
             a.url = self.journal_url + a.url
@@ -266,8 +265,6 @@ class JournalTemplate:
         for i in range(len(self.article_list)):
             if self.is_new_article[i]:
                 a = self.article_list[i]
-                c += 1
-                print(c)
 
                 logging.info('start crawling_delay')
                 time.sleep(self.crawling_delay)

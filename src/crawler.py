@@ -20,7 +20,8 @@ logging.info('Crawling Starts.')
 
 journal_list = [Nature(), NatureImmunology(), \
                 Cell(), CancerCell(), Immunity(), \
-                JournalOfExperimentalMedicine()]
+                JournalOfExperimentalMedicine(), \
+                Science()]
 journal_card_list = []
 
 for j in journal_list:
