@@ -10,10 +10,11 @@ ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like 
 hds = {'Accept':accept,'Accept-Encoding':accept_enc,'Accept-Language':accept_lang,'User-Agent': ua}
 
 class JournalTemplate:
-    article_list = []
+    article_list = ()
 
     search_mode = 0
     crawling_delay = 10
+    timeout = 10
 
     journal_name = ''
     journal_url = ''
@@ -105,49 +106,56 @@ class JournalTemplate:
 
     def __get_article_items1(self):
         ##### get latest articles
-        with webs.Session() as ses:
-
-            time.sleep(self.crawling_delay)
-            page = ses.get(self.journal_url + self.latest_articles_url, headers=hds)
-            aritcle_htmls = re.findall(self.pat_article, page.text)
-
-            ###### get article items
-            counter = 0
-
-            for html in aritcle_htmls:
-                a = article_module.Aritcle()
-                
-                # get items in article
-                a.title_e = self.check_items_in_article(re.findall( self.pat_title,        html))
-                a.url     = self.check_items_in_article(re.findall( self.pat_url,          html))
-                a.kind    = self.check_items_in_article(re.findall( self.pat_article_kind, html))
-                a.date    = self.check_items_in_article(re.findall( self.pat_publish_date, html))
-
-                # format items
-                a.authors = self.format_item_of_authors(re.findall( self.pat_authors,      html))
-                a.title_e = self.format_text(a.title_e)
-                a.date    = self.format_date(a.date)
-
-                a.title_j = translation.translation_en_into_ja(a.title_e)
-                
-                self.article_list.append(a)
-                counter += 1
-
-                if counter == 3:
-                    break
+        #with webs.Session() as ses:
+            #ses.headers.update(hds)
             
-            self.__get_abstract(ses)
+        time.sleep(self.crawling_delay)
+        #page = ses.get(self.journal_url + self.latest_articles_url, timeout=3)
+        page = webs.get(self.journal_url + self.latest_articles_url, headers=hds, timeout=self.timeout)
+        aritcle_htmls = re.findall(self.pat_article, page.text)
+
+        ###### get article items
+        counter = 0
+        article_list_buf = []
+
+        # take articles by oldest first
+        for html in reversed(aritcle_htmls):
+            a = article_module.Aritcle()
+            
+            # get items in article
+            a.title_e = self.check_items_in_article(re.findall( self.pat_title,        html))
+            a.url     = self.check_items_in_article(re.findall( self.pat_url,          html))
+            a.kind    = self.check_items_in_article(re.findall( self.pat_article_kind, html))
+            a.date    = self.check_items_in_article(re.findall( self.pat_publish_date, html))
+
+            # format items
+            a.authors = self.format_item_of_authors(re.findall( self.pat_authors,      html))
+            a.title_e = self.format_text(a.title_e)
+            a.date    = self.format_date(a.date)
+
+            a.title_j = translation.translation_en_into_ja(a.title_e)
+            
+            article_list_buf.append(a)
+            counter += 1
+
+            if counter == 2:
+                break
+        
+        self.article_list = tuple(article_list_buf)
+        self.__get_abstract()
 
     def __get_article_items2(self):
         ##### get latest articles
         with webs.Session() as ses:
+            ses.headers.update(hds)
 
             time.sleep(self.crawling_delay)
-            page = ses.get(self.journal_url + self.latest_articles_url, headers=hds)
+            page = ses.get(self.journal_url + self.latest_articles_url, timeout=self.timeout)
             aritcle_genre_htmls = re.findall(self.pat_article_genre, page.text)
 
             ###### get article items
             #counter = 0
+            article_list_buf = []
 
             for genre_html in aritcle_genre_htmls:
                 article_kind = self.check_items_in_article(re.findall(self.pat_article_kind, genre_html))
@@ -171,15 +179,16 @@ class JournalTemplate:
 
                     a.title_j = translation.translation_en_into_ja(a.title_e)
                     
-                    self.article_list.append(a)
+                    article_list_buf.append(a)
                     #counter += 1
 
                     #if counter == 5:
                         #break
             
-            self.__get_abstract(ses)
+            self.article_list = tuple(article_list_buf)
+            self.__get_abstract()
         
-    def __get_abstract(self, session):
+    def __get_abstract(self):
         c = 0
         ##### convert relative urls into absolute urls, and rewrite url items
         for a in self.article_list:
@@ -191,9 +200,14 @@ class JournalTemplate:
             print(c)
 
             time.sleep(self.crawling_delay)
-            page2 = session.get(a.url,headers=hds)
-            
-            a.abstract_e = self.check_items_in_article(re.findall( self.pat_abstract, page2.text))
-            a.abstract_e = self.format_abstract(a.abstract_e)
-            
-            a.abstract_j = translation.translation_en_into_ja(a.abstract_e)
+
+            try:
+                #page2 = session.get(a.url, timeout=3)
+                page2 = webs.get(a.url, headers=hds, timeout=self.timeout)
+
+                a.abstract_e = self.check_items_in_article(re.findall( self.pat_abstract, page2.text))
+                a.abstract_e = self.format_abstract(a.abstract_e)
+                
+                a.abstract_j = translation.translation_en_into_ja(a.abstract_e)
+            except webs.exceptions.ConnectionError:
+                print('error is occered.')

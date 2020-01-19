@@ -51,9 +51,11 @@ class Cell(JournalTemplate):
 
 class CancerCell(Cell):
 
-    journal_name = 'Cancer Cell'
+    journal_name = 'Cancer_Cell'
     latest_articles_url = "/cancer-cell/newarticles"
+    sql_database_path = 'database/{}.sqlite'.format(journal_name)
 
 class Immunity(Cell):
     journal_name = 'Immunity'
     latest_articles_url = "/immunity/newarticles"
+    sql_database_path = 'database/{}.sqlite'.format(journal_name)

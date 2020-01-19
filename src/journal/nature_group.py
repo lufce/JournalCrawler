@@ -4,11 +4,12 @@ import re
 class Nature(JournalTemplate):
 
     search_mode = 1
+    crawling_delay = 3
         
     journal_name = 'Nature'
     journal_url = 'https://www.nature.com'
     latest_articles_url = '/nature/research'
-    db_path = 'database/{}.sqlite'.format(journal_name)
+    sql_database_path = 'database/{}.sqlite'.format(journal_name)
 
     pat_article      = r'<article>[\s\S]+?</article>'
     pat_title        = r'<a href.+>([\s\S]+?)</a>'
@@ -36,3 +37,12 @@ class Nature(JournalTemplate):
         abstract = re.sub(r'\s+\,', ",", abstract)
 
         return abstract
+
+class NatureImmunology(Nature):
+
+    crawling_delay = 3
+        
+    journal_name = 'Nature_Immunology'
+    
+    latest_articles_url = '/ni/research'
+    sql_database_path = 'database/{}.sqlite'.format(journal_name)

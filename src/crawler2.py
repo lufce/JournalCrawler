@@ -1,11 +1,12 @@
-from journal.cell_press import Cell, Immunity
+from journal.cell_press import Cell, CancerCell, Immunity
+from journal.aaas import Science
+from journal.nature_group import Nature, NatureImmunology
 
 import arrange_html_table
 import my_sqlite
 import html_mail_send
 
-journal_list = [Cell(),Immunity()]
-
+journal_list = [Nature(), NatureImmunology(), Cell(), CancerCell(), Immunity()]
 journal_card_list = []
 
 for journal in journal_list:
