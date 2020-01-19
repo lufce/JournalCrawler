@@ -1,7 +1,4 @@
-from journal.aaas import Science
+import logging
 
-j = Science()
-
-j.store_article_list()
-
-print('end')
+logging.basicConfig(filename='log/a.log',level=logging.INFO)
+logging.exception("a")

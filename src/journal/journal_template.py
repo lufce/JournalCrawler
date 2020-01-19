@@ -3,14 +3,21 @@ import requests as webs
 import article.article as article_module
 import translation
 
+import logging
+
 accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
 accept_enc = 'gzip, deflate, br'
 accept_lang = 'ja,en-US;q=0.9,en;q=0.8,pt;q=0.7'
 ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
 hds = {'Accept':accept,'Accept-Encoding':accept_enc,'Accept-Language':accept_lang,'User-Agent': ua}
 
+counter_limit = 6
+
 class JournalTemplate:
+    # クラス変数としてミュータブルなリストを用いると、継承した子のクラスと共有されてしまい、正常に動作しない。
+    # なのでTupleにしている。
     article_list = ()
+    is_new_article = ()
 
     search_mode = 0
     crawling_delay = 10
@@ -29,8 +36,11 @@ class JournalTemplate:
     pat_authors = ''
     pat_abstract = ''
 
-    #used in store_article_items2
+    #used in get_article_items2
     pat_article_genre = ''
+
+    #used in get_article_items3
+    pat_article_part = ''
 
     def article_url (self):
         return self.journal_url + self.latest_articles_url
@@ -71,6 +81,9 @@ class JournalTemplate:
         #delete space before comma
         text = re.sub(r'\s+\,', ",", text)
 
+        #delete space at the end of sentence
+        text = re.sub(r'\s+$', "", text)
+
         return text
 
     def format_abstract(self, abstract):
@@ -96,23 +109,29 @@ class JournalTemplate:
     
     def store_article_list(self):
         if   self.search_mode == 1:
+            logging.info('start get_article_item1: %s', self.journal_name)
             self.__get_article_items1()
         elif self.search_mode == 2:
+            logging.info('start get_article_item2: %s', self.journal_name)
             self.__get_article_items2()
+        elif self.search_mode == 3:
+            logging.info('start get_article_item3: %s', self.journal_name)
+            self.__get_article_items3()
         else:
             return
-        
-        #self.__get_abstract()
 
     def __get_article_items1(self):
         ##### get latest articles
-        #with webs.Session() as ses:
-            #ses.headers.update(hds)
-            
+        logging.info('start crawling_delay')
         time.sleep(self.crawling_delay)
-        #page = ses.get(self.journal_url + self.latest_articles_url, timeout=3)
+        logging.info('end crawling_delay')
+
+        logging.info('start get method')
         page = webs.get(self.journal_url + self.latest_articles_url, headers=hds, timeout=self.timeout)
+        logging.info('end get method')
+
         aritcle_htmls = re.findall(self.pat_article, page.text)
+        logging.info('get %s articles', str(len(aritcle_htmls)))
 
         ###### get article items
         counter = 0
@@ -136,78 +155,136 @@ class JournalTemplate:
             a.title_j = translation.translation_en_into_ja(a.title_e)
             
             article_list_buf.append(a)
+            logging.info('added a article')
+
             counter += 1
 
-            if counter == 2:
-                break
+            if counter_limit != -1:
+                if counter == counter_limit:
+                    break
         
-        self.article_list = tuple(article_list_buf)
-        self.__get_abstract()
+        self.article_list = tuple(reversed(article_list_buf))
 
     def __get_article_items2(self):
-        ##### get latest articles
-        with webs.Session() as ses:
-            ses.headers.update(hds)
+        ##### get article genre list
+        logging.info('start crawling_delay')
+        time.sleep(self.crawling_delay)
+        logging.info('end crawling_delay')
 
-            time.sleep(self.crawling_delay)
-            page = ses.get(self.journal_url + self.latest_articles_url, timeout=self.timeout)
-            aritcle_genre_htmls = re.findall(self.pat_article_genre, page.text)
+        logging.info('start get method')
+        page = webs.get(self.journal_url + self.latest_articles_url, headers=hds, timeout=self.timeout)
+        logging.info('end get method')
 
-            ###### get article items
-            #counter = 0
-            article_list_buf = []
+        aritcle_genre_htmls = re.findall(self.pat_article_genre, page.text)
+        logging.info('get %s article genres', str(len(aritcle_genre_htmls)))
 
-            for genre_html in aritcle_genre_htmls:
-                article_kind = self.check_items_in_article(re.findall(self.pat_article_kind, genre_html))
-                article_kind = self.format_text(article_kind)
+        ###### get article list
+        article_list_buf = []
 
-                aritcle_htmls = re.findall(self.pat_article, genre_html)
-                
-                for html in aritcle_htmls:
-                    a = article_module.Aritcle()
-                    
-                    # get items in article
-                    a.title_e = self.check_items_in_article(re.findall( self.pat_title,        html))
-                    a.url     = self.check_items_in_article(re.findall( self.pat_url,          html))
-                    a.kind    = article_kind
-                    a.date    = self.check_items_in_article(re.findall( self.pat_publish_date, html))
+        for genre_html in aritcle_genre_htmls:
+            article_kind = self.check_items_in_article(re.findall(self.pat_article_kind, genre_html))
+            article_kind = self.format_text(article_kind)
 
-                    # format items
-                    a.authors = self.format_item_of_authors(re.findall( self.pat_authors,      html))
-                    a.title_e = self.format_text(a.title_e)
-                    a.date    = self.format_date(a.date)
-
-                    a.title_j = translation.translation_en_into_ja(a.title_e)
-                    
-                    article_list_buf.append(a)
-                    #counter += 1
-
-                    #if counter == 5:
-                        #break
+            aritcle_htmls = re.findall(self.pat_article, genre_html)
+            logging.info('get %s articles in %s', str(len(aritcle_htmls)), article_kind)
             
-            self.article_list = tuple(article_list_buf)
-            self.__get_abstract()
+            ##### get article items
+            for html in aritcle_htmls:
+                a = article_module.Aritcle()
+                
+                # get items in article
+                a.title_e = self.check_items_in_article(re.findall( self.pat_title,        html))
+                a.url     = self.check_items_in_article(re.findall( self.pat_url,          html))
+                a.kind    = article_kind
+                a.date    = self.check_items_in_article(re.findall( self.pat_publish_date, html))
+
+                # format items
+                a.authors = self.format_item_of_authors(re.findall( self.pat_authors,      html))
+                a.title_e = self.format_text(a.title_e)
+                a.date    = self.format_date(a.date)
+
+                a.title_j = translation.translation_en_into_ja(a.title_e)
+                
+                article_list_buf.append(a)
+                logging.info('added a article')
+            
+            self.article_list = tuple(reversed(article_list_buf))
+
+    def __get_article_items3(self):
+        ##### get new articles part
+        logging.info('start crawling_delay')
+        time.sleep(self.crawling_delay)
+        logging.info('end crawling_delay')
+
+        logging.info('start get method')
+        page = webs.get(self.journal_url + self.latest_articles_url, headers=hds, timeout=self.timeout)
+        logging.info('end get method')
+
+        new_articles_html = re.findall(self.pat_article_part, page.text)[0]
+
+        ###### get articles
+        counter = 0
+        article_list_buf = []
+        aritcle_htmls = re.findall(self.pat_article, new_articles_html)
+        logging.info('get %s articles', str(len(aritcle_htmls)))
+
+        # take articles by oldest first
+        for html in reversed(aritcle_htmls):
+            a = article_module.Aritcle()
+            
+            # get items in article
+            a.title_e = self.check_items_in_article(re.findall( self.pat_title,        html))
+            a.url     = self.check_items_in_article(re.findall( self.pat_url,          html))
+            a.kind    = self.check_items_in_article(re.findall( self.pat_article_kind, html))
+            a.date    = self.check_items_in_article(re.findall( self.pat_publish_date, html))
+
+            # format items
+            a.authors = self.format_text(self.format_item_of_authors(re.findall( self.pat_authors, html)))
+            a.title_e = self.format_text(a.title_e)
+            a.kind    = self.format_text(a.kind)
+            a.date    = self.format_date(a.date)
+
+            a.title_j = translation.translation_en_into_ja(a.title_e)
+            
+            article_list_buf.append(a)
+            logging.info('added a article')
+            counter += 1
+
+            if counter_limit != -1:
+                if counter == counter_limit:
+                    break
         
-    def __get_abstract(self):
+        self.article_list = tuple(reversed(article_list_buf))
+
+    def get_abstract(self):
         c = 0
         ##### convert relative urls into absolute urls, and rewrite url items
         for a in self.article_list:
             a.url = self.journal_url + a.url
         
-        ##### get abstracts of articles
-        for a in self.article_list:
-            c += 1
-            print(c)
+        ##### get abstracts of only new articles
+        for i in range(len(self.article_list)):
+            if self.is_new_article[i]:
+                a = self.article_list[i]
+                c += 1
+                print(c)
 
-            time.sleep(self.crawling_delay)
+                logging.info('start crawling_delay')
+                time.sleep(self.crawling_delay)
+                logging.info('end crawling_delay')
 
-            try:
-                #page2 = session.get(a.url, timeout=3)
-                page2 = webs.get(a.url, headers=hds, timeout=self.timeout)
+                try:
+                    logging.info('start get method: %s', a.title_e)
+                    page2 = webs.get(a.url, headers=hds, timeout=self.timeout)
+                    logging.info('end get method')
 
-                a.abstract_e = self.check_items_in_article(re.findall( self.pat_abstract, page2.text))
-                a.abstract_e = self.format_abstract(a.abstract_e)
-                
-                a.abstract_j = translation.translation_en_into_ja(a.abstract_e)
-            except webs.exceptions.ConnectionError:
-                print('error is occered.')
+                    a.abstract_e = self.check_items_in_article(re.findall( self.pat_abstract, page2.text))
+                    a.abstract_e = self.format_abstract(a.abstract_e)
+                    
+                    a.abstract_j = translation.translation_en_into_ja(a.abstract_e)
+                except webs.exceptions.ConnectTimeout:
+                    logging.exception('ConnectTimeout')
+                except webs.exceptions.ReadTimeout:
+                    logging.exception('ReadTimeout')
+                except webs.exceptions.RetryError:
+                    logging.exception('RetryError')
