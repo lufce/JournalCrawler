@@ -2,10 +2,12 @@ from journal.journal_template import JournalTemplate
 import re
 
 class Nature(JournalTemplate):
+
+    search_mode = 1
         
     journal_name = 'Nature'
-    journal_url = "https://www.nature.com"
-    latest_articles_url = "/nature/research"
+    journal_url = 'https://www.nature.com'
+    latest_articles_url = '/nature/research'
     db_path = 'database/{}.sqlite'.format(journal_name)
 
     pat_article      = r'<article>[\s\S]+?</article>'

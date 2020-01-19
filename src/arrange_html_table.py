@@ -59,9 +59,9 @@ def __make_article_card(article):
 
     return article_card
 
-def __join_article_cards(article_card_list):
-    article_cards = '\n'.join(article_card_list)
-    return article_cards
+def join_cards(card_list):
+    cards = '\n'.join(card_list)
+    return cards
 
 def make_article_cards(article_list, is_new_list):
     # if all article is not new, return '' ( empty string ).
@@ -73,7 +73,7 @@ def make_article_cards(article_list, is_new_list):
         if is_new_list[i]:
             article_card_list.append(__make_article_card(article_list[i]))
     
-    article_cards = __join_article_cards(article_card_list)
+    article_cards = join_cards(article_card_list)
 
     return article_cards
 

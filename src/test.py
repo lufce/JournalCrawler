@@ -1,8 +1,6 @@
-from journal.nature_group import Nature
-import article.article as article_module
-import os
+from journal.aaas import Science
 
-j = Nature()
+j = Science()
 
 j.store_article_list()
 

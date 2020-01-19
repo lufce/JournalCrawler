@@ -1,10 +1,12 @@
 from journal.journal_template import JournalTemplate
 
 class Cell(JournalTemplate):
-        
+    
+    search_mode = 1
+
     journal_name = 'Cell'
-    journal_url = "https://www.cell.com"
-    latest_articles_url = "/cell/newarticles"
+    journal_url = 'https://www.cell.com'
+    latest_articles_url = '/cell/newarticles'
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
 
     pat_article      = r'<section class="toc__section aop__toc">[\s\S]+?</section>'
