@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 
 FROM_ADDRESS = os.environ['FROM_ADDRESS']
 MY_PASSWORD  = os.environ['hotmail_pass']
-TO_ADDRESS   = (os.environ['TO_ADDRESS'])
+TO_ADDRESS   = (os.environ['TO_ADDRESS'], os.environ['TO_ADDRESS3'])
 
 #CHARSET      = "ISO-2022-JP"
 CHARSET      = "utf-8"
