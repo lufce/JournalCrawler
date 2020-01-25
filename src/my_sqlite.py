@@ -50,10 +50,10 @@ def write_article_info_into_database(db_path, article_list):
     date_list = [a.date for a in article_list]
     yyyymm_list = __get_yyyymm_list(date_list)
 
-    if len(yyyymm_list) > 10:
-        # large viriaty of yyyymm list indicates wrong list reference.
-        #TODO 独自の例外処理
-        raise Exception
+    # if len(yyyymm_list) > 20:
+    #     # large viriaty of yyyymm list indicates wrong list reference.
+    #     #TODO 独自の例外処理
+    #     raise Exception
 
     connection = sql.connect(db_path)
     c = connection.cursor()

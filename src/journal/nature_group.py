@@ -26,6 +26,7 @@ class Nature(JournalTemplate):
         #delete reference number
         abstract = re.sub(r'<sup>(\d+,)*\d</sup>',"",abstract)
         abstract = re.sub(r'<sup>\d+</sup>',"",abstract)
+        abstract = re.sub(r'<sup><a data-track="click" data-track-action="reference anchor"[\s\S]+?</sup>',"",abstract)
 
         #delete html tag
         abstract = re.sub(r'<.+?>', "" , abstract)
@@ -45,4 +46,44 @@ class NatureImmunology(Nature):
     journal_name = 'Nature_Immunology'
     
     latest_articles_url = '/ni/research'
+    sql_database_path = 'database/{}.sqlite'.format(journal_name)
+
+class NatureMedicine(Nature):
+    crawling_delay = 3
+        
+    journal_name = 'Nature_Medicine'
+    
+    latest_articles_url = '/nm/research'
+    sql_database_path = 'database/{}.sqlite'.format(journal_name)
+
+class NatureCancer(Nature):
+    crawling_delay = 3
+        
+    journal_name = 'Nature_Cancer'
+    
+    latest_articles_url = '/natcancer/research'
+    sql_database_path = 'database/{}.sqlite'.format(journal_name)
+
+class NatureMethods(Nature):
+    crawling_delay = 3
+        
+    journal_name = 'Nature_Methods'
+    
+    latest_articles_url = '/nmeth/research'
+    sql_database_path = 'database/{}.sqlite'.format(journal_name)
+
+class NatureReviewsImmunology(Nature):
+    crawling_delay = 3
+        
+    journal_name = 'Nature_Reviews_Immunology'
+    
+    latest_articles_url = '/nri/reviews'
+    sql_database_path = 'database/{}.sqlite'.format(journal_name)
+
+class ScientificReports(Nature):
+    crawling_delay = 3
+        
+    journal_name = 'Scientific_Reports'
+    
+    latest_articles_url = '/srep/articles'
     sql_database_path = 'database/{}.sqlite'.format(journal_name)

@@ -19,11 +19,11 @@ __AUTHOR_LINE_FONT_SIZE  = '2'
 
 ##### /settings
 
-def __make_article_card(article):
+def __make_article_card(article, count):
     article_card ='''
     <table width="{width}" border="{border}" cellpadding="{padding}" cellspacing="{spacing}">
         <tr>
-            <td bgcolor="{title_bgcolor}"><font size="{article_line_font_size}">{article_type}:{date}</font><br>
+            <td bgcolor="{title_bgcolor}"><font size="{article_line_font_size}">No.{count}&#009&#009{article_type}:{date}</font><br>
             <b><a href="{article_url}">{title_j}</b> {title_e}</a><br>
             <font size="{author_line_font_size}">{authors}</font>
             </td>
@@ -33,7 +33,7 @@ def __make_article_card(article):
         </tr>
     </table>
     <br>'''.format(width=__ARTICLE_TABLE_WIDTH, border=__ARTICLE_TABLE_BORDER, padding=__ARTICLE_TABLE_CELLPAD, \
-                   spacing=__ARTICLE_TABLE_CELLSPC, title_bgcolor=__ARTICLE_TITLE_BGCOLOR, title_j=article.title_j, article_url=article.url, \
+                   spacing=__ARTICLE_TABLE_CELLSPC, title_bgcolor=__ARTICLE_TITLE_BGCOLOR, title_j=article.title_j, article_url=article.url, count=count, \
                    title_e=article.title_e, abs_j=article.abstract_j, abs_e=article.abstract_e, article_type=article.kind, date=article.date, authors=article.authors, \
                    article_line_font_size=__ARTICLE_LINE_FONT_SIZE, author_line_font_size=__AUTHOR_LINE_FONT_SIZE)
 
@@ -45,32 +45,35 @@ def join_cards(card_list):
 
 def make_article_cards(article_list, is_new_list):
     # if all article is not new, return '' ( empty string ).
-    #article_item_list = [titles, urls, article_types, dates, authors, abstracts]
 
     article_card_list=[]
+    count = 0
 
     for i in range(0, len(article_list)):
         if is_new_list[i]:
-            article_card_list.append(__make_article_card(article_list[i]))
+            count += 1
+            article_card_list.append(__make_article_card(article_list[i], count))
     
     article_cards = join_cards(article_card_list)
 
     return article_cards
 
-def make_journal_card(journal_name,article_cards):
+def make_journal_card(journal,article_cards):
     if article_cards == '':
         return ''
     else:
+        journal_name = journal.journal_name.replace('_'," ")
+        count = journal.is_new_article.count(True)
 
         journal_card = '''<table width="{journal_width}" border="{journal_border}" cellpadding="{journal_padding}" cellspacing="{journal_spacing}" bgcolor="{journal_bgcolor}">
         <tr>
             <td>
-                <font size="6"><b>{journal_title}</b></font><br>
+                <font size="6"><b>{journal_title} ({count})</b></font></b></font><br>
                 {article_cards}
             </td>
         </tr>
         </table>'''.format(journal_width=__JOURNAL_TABLE_WIDHT, journal_border=__JOURNAL_TABLE_BORDER, \
-                    journal_padding=__JOURNAL_TABLE_CELLPAD, journal_spacing=__JOURNAL_TABLE_CELLSPC, \
+                    journal_padding=__JOURNAL_TABLE_CELLPAD, journal_spacing=__JOURNAL_TABLE_CELLSPC, count=count, \
                     journal_bgcolor=__JOURNAL_TABLE_BGCOLOR, journal_title=journal_name, article_cards=article_cards)
 
         return journal_card

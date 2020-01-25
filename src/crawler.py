@@ -1,7 +1,8 @@
 from journal.cell_press import Cell, CancerCell, Immunity
 from journal.aaas import Science
-from journal.nature_group import Nature, NatureImmunology
+from journal.nature_group import *
 from journal.rockefeller_university_press import JournalOfExperimentalMedicine
+from journal.journal_of_immunology import JournalOfImmunology
 
 import arrange_html_table, my_sqlite, html_mail_send
 import logging, time
@@ -18,15 +19,16 @@ logging.basicConfig(filename='log/{}.log'.format(now),level=logging.INFO, format
 
 logging.info('Crawling Starts.')
 
-journal_list = [Nature(), NatureImmunology(), \
+journal_list = [Nature(), NatureImmunology(), NatureMedicine(), NatureMethods(), NatureReviewsImmunology(), ScientificReports(), \
                 Cell(), CancerCell(), Immunity(), \
                 JournalOfExperimentalMedicine(), \
+                JournalOfImmunology(), \
                 Science()]
 journal_card_list = []
 
 for j in journal_list:
 
-    logging.info('%s starts', j.journal_name)
+    logging.info('--------------------%s starts--------------------', j.journal_name)
 
     # get article items except the abstracts
     logging.info('Store article')
@@ -41,10 +43,12 @@ for j in journal_list:
     j.get_abstract()
 
     logging.info('Making article cards')
-    article_cards = arrange_html_table.make_article_cards(j.article_list,is_new_list)
+    article_cards = arrange_html_table.make_article_cards(j.article_list, j.is_new_article)
 
     logging.info('Making journal card')
-    journal_card_list.append(arrange_html_table.make_journal_card(j.journal_name, article_cards))
+    journal_card = arrange_html_table.make_journal_card(j, article_cards)
+    if journal_card != '':
+        journal_card_list.append(journal_card)
 
 logging.info('Making journal cards')
 journal_cards = arrange_html_table.join_cards(journal_card_list)
@@ -53,6 +57,6 @@ logging.info('Making html mail body')
 html = arrange_html_table.wrap_html_tags(journal_cards)
 
 logging.info('Sending mails')
-html_mail_send.html_mailing('test',html)
+html_mail_send.html_mailing('今朝の新着論文',html)
 
 logging.info('End')

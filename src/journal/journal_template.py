@@ -17,6 +17,7 @@ class JournalTemplate:
     article_list = ()
     is_new_article = ()
 
+    # set -1 for getting articles unlimitedly
     counter_limit = -1
 
     search_mode = 0
@@ -154,10 +155,9 @@ class JournalTemplate:
 
             a.title_j = translation.translation_en_into_ja(a.title_e)
             
-            article_list_buf.append(a)
-            logging.info('added a article')
-
             counter += 1
+            article_list_buf.append(a)
+            logging.info('added a article:%s',str(counter))
 
             if self.counter_limit != -1:
                 if counter == self.counter_limit:
@@ -189,6 +189,7 @@ class JournalTemplate:
             logging.info('get %s articles in %s', str(len(aritcle_htmls)), article_kind)
             
             ##### get article items
+            counter = 0
             for html in aritcle_htmls:
                 a = article_module.Aritcle()
                 
@@ -205,8 +206,9 @@ class JournalTemplate:
 
                 a.title_j = translation.translation_en_into_ja(a.title_e)
                 
+                counter += 1
                 article_list_buf.append(a)
-                logging.info('added a article')
+                logging.info('added a article:%s',str(counter))
             
             self.article_list = tuple(article_list_buf)
 
