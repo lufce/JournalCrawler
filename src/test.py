@@ -1,2 +1,3 @@
-t = (True,True,False)
-print(t.count(True))
+a = 'a'
+a += 'b'
+print(a)

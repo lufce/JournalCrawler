@@ -78,6 +78,19 @@ def make_journal_card(journal,article_cards):
 
         return journal_card
 
+def make_contents_list_card(journal, contents_list_card):
+    journal_name = journal.journal_name.replace('_', ' ')
+    article_count = journal.is_new_article.count(True)
+
+    if contents_list_card == '':
+        contents_list_card = '<bお品書き</b><br>\n'
+
+    if article_count > 0:
+        contents_list_card  = contents_list_card + journal_name + ' ' + str(article_count) + '<br>\n'
+    
+    return contents_list_card
+        
+
 def wrap_html_tags(journal_cards):
     if journal_cards == '':
         return ''

@@ -12,8 +12,9 @@ import arrange_html_table, my_sqlite, html_mail_send
 #                 Cell(), CancerCell(), Immunity(), \
 #                 JournalOfExperimentalMedicine(), \
 #                 Science()]
-journal_list = [JournalOfImmunology()]
+journal_list = [NatureImmunology(),NatureMedicine(),NatureCancer()]
 journal_card_list = []
+contents_list_card = ''
 
 for j in journal_list:
 
@@ -31,7 +32,9 @@ for j in journal_list:
     journal_card = arrange_html_table.make_journal_card(j, article_cards)
     if journal_card != '':
         journal_card_list.append(journal_card)
+    
+    contents_list_card = arrange_html_table.make_contents_list_card(j, contents_list_card)
 
 journal_cards = arrange_html_table.join_cards(journal_card_list)
-html = arrange_html_table.wrap_html_tags(journal_cards)
-html_mail_send.html_mailing('今朝の新着論文',html)
+html = arrange_html_table.wrap_html_tags(contents_list_card + journal_cards)
+html_mail_send.html_mailing('今朝の新着論文',html,'debug')

@@ -4,12 +4,12 @@ import re
 
 class JournalOfImmunology(JournalTemplate):
 
-    search_mode = 3
+    search_mode = 1
     crawling_delay = 10
         
     journal_name = 'Journal_of_Immunology'
     journal_url = 'https://www.jimmunol.org'
-    latest_articles_url = ''
+    latest_articles_url = '/content/early/recent'
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
 
     pat_article      = r'<div class="highwire-article-citation highwire-citation-type-highwire-article"[\s\S]+?</li>'
@@ -17,7 +17,7 @@ class JournalOfImmunology(JournalTemplate):
     pat_url          = r'<a href="(.+?)"'
     pat_article_kind = r'<div class="highwire-(article)-citation highwire-citation-type-highwire-article'
     pat_publish_date = r'<span  class="highwire-cite-metadata-date highwire-cite-metadata">(.+?), </span>'
-    pat_authors      = r'<span class="highwire-citation-author.*?" data-delta="\d+">(.+?)</span>'
+    pat_authors      = r'<span class="highwire-citation-author.*?" data-delta="\d+">(.+?)</span></span>'
     pat_abstract     = r'<meta name="citation_abstract" lang="en" content="&lt;p&gt;(.+?)&lt;/p&gt;" />'
 
     pat_article_part = r'<h2 class="pane-title">Latest Articles</h2>([\s\S]+?)</ul>'
@@ -71,3 +71,10 @@ class JournalOfImmunology(JournalTemplate):
         abstract = re.sub(r'\s+\,', ",", abstract)
 
         return abstract
+
+    def format_item_of_authors(self, item_list):
+        # delete hetml tag around author names
+        for i in range(len(item_list)):
+            item_list[i] = re.sub(r'<[^>]+?>', "", item_list[i])
+
+        return ', '.join(item_list)

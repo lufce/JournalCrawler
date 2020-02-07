@@ -44,20 +44,12 @@ omit = object()
 def html_mailing(subject, html, to=omit):
     if to is omit:
         to = TO_ADDRESS
-    
+    elif to == 'debug':
+        to = TO_ADDRESS[:1]
+
     if html != '':
         msg = __create_html_message(to, subject, html)
         __send(FROM_ADDRESS,to, msg)
 
 if __name__ == '__main__':
-    html_body = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html>
-    <head></head>
-    <body>
-        <details>
-            <summary>nature</summary>
-            hello
-        </details>
-    </body>
-</html>'''
-    html_mailing('html_mail_test',html_body)
+    html_mailing('html_mail_test','a')
