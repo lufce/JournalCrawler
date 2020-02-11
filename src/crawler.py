@@ -19,12 +19,13 @@ logging.basicConfig(filename='log/{}.log'.format(now),level=logging.INFO, format
 
 logging.info('Crawling Starts.')
 
-journal_list = [Nature(), NatureImmunology(), NatureMedicine(), NatureMethods(), NatureReviewsImmunology(), ScientificReports(), \
+journal_list = [Nature(), NatureImmunology(), NatureMedicine(), NatureMethods(), NatureReviewsImmunology(), \
                 Cell(), CancerCell(), Immunity(), \
                 JournalOfExperimentalMedicine(), \
                 JournalOfImmunology(), \
-                Science()]
+                Science(), ScientificReports()]
 journal_card_list = []
+contents_list_card = ''
 
 for j in journal_list:
 
@@ -49,6 +50,8 @@ for j in journal_list:
     journal_card = arrange_html_table.make_journal_card(j, article_cards)
     if journal_card != '':
         journal_card_list.append(journal_card)
+    
+    contents_list_card = arrange_html_table.make_contents_list_card(j, contents_list_card)
 
 logging.info('Making journal cards')
 journal_cards = arrange_html_table.join_cards(journal_card_list)
