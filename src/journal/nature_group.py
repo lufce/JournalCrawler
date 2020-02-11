@@ -24,8 +24,7 @@ class Nature(JournalTemplate):
         #### This method may be overrided for each journals
 
         #delete reference number
-        abstract = re.sub(r'<sup>(\d+,)*\d</sup>',"",abstract)
-        abstract = re.sub(r'<sup>\d+</sup>',"",abstract)
+        abstract = re.sub(r'<sup>[\d,–]+?</sup>',"",abstract)   #- is not minus or hyphen. maybe dash.
         abstract = re.sub(r'<sup><a data-track="click" data-track-action="reference anchor"[\s\S]+?</sup>',"",abstract)
 
         #delete html tag
@@ -36,6 +35,8 @@ class Nature(JournalTemplate):
         abstract = re.sub(r'\s+', " ", abstract)
         abstract = re.sub(r'\s+\.', ".", abstract)
         abstract = re.sub(r'\s+\,', ",", abstract)
+
+        abstract = re.sub(r',.', ".", abstract)
 
         return abstract
 
