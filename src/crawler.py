@@ -57,7 +57,9 @@ logging.info('Making journal cards')
 journal_cards = arrange_html_table.join_cards(journal_card_list)
 
 logging.info('Making html mail body')
-html = arrange_html_table.wrap_html_tags(journal_cards)
+if contents_list_card != '':
+    contents_list_card = '<bお品書き</b><br>\n' + contents_list_card
+html = arrange_html_table.wrap_html_tags(contents_list_card + journal_cards)
 
 logging.info('Sending mails')
 html_mail_send.html_mailing('今朝の新着論文',html)

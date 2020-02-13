@@ -36,5 +36,7 @@ for j in journal_list:
     contents_list_card = arrange_html_table.make_contents_list_card(j, contents_list_card)
 
 journal_cards = arrange_html_table.join_cards(journal_card_list)
+if contents_list_card != '':
+    contents_list_card = '<bお品書き</b><br>\n' + contents_list_card
 html = arrange_html_table.wrap_html_tags(contents_list_card + journal_cards)
 html_mail_send.html_mailing('今朝の新着論文',html,'debug')
