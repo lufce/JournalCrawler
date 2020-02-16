@@ -82,8 +82,9 @@ def make_contents_list_card(journal, contents_list_card):
     journal_name = journal.journal_name.replace('_', ' ')
     article_count = journal.is_new_article.count(True)
 
-    if article_count > 0:
-        contents_list_card  = contents_list_card + journal_name + ' ' + str(article_count) + '<br>\n'
+    if contents_list_card == '':
+        contents_list_card = '<b>お品書き</b><br>\n'
+    contents_list_card  = contents_list_card + journal_name + ' ' + str(article_count) + '<br>\n'
     
     return contents_list_card
         

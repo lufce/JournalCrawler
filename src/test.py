@@ -1,8 +1,6 @@
-import re
+import html_mail_send
 
-abstract = '''sleep<sup>5,6</sup> and depression<sup>7</sup>,<sup>1–4,8,9</sup>. Despite their'''
-
-abstract = re.sub(r'<sup>[\d,–]+?</sup>',"",abstract)
-abstract = re.sub(r',.', ".", abstract)
-
-print(abstract)
+html = '''
+<b>a</b>
+'''
+html_mail_send.html_mailing('今朝の新着論文',html)

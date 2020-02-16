@@ -1,4 +1,4 @@
-from journal.journal_template import JournalTemplate
+from journal_re.journal_template import JournalTemplate
 
 class Cell(JournalTemplate):
     
