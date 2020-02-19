@@ -1,6 +1,5 @@
-import html_mail_send
-
-html = '''
-<b>a</b>
-'''
-html_mail_send.html_mailing('今朝の新着論文',html)
+a = 'a,b,c,d'
+e = 'e'
+ae = a+','+e
+t = tuple(ae.split(','))
+print(t)

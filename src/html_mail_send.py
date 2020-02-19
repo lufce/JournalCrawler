@@ -6,7 +6,8 @@ FROM_ADDRESS = os.environ['FROM_ADDRESS']
 MY_PASSWORD  = os.environ['hotmail_pass']
 #TO_ADDRESS   = (os.environ['TO_ADDRESS'], os.environ['TO_ADDRESS3'])
 TO_ADDRESS   = (os.environ['TO_ADDRESS3'],)
-BCC_ADDRESS  = (os.environ['TO_ADDRESS'], os.environ['TO_ADDRESS4'])
+buf = os.environ['TO_ADDRESS_TEAM'] + ',' + os.environ['TO_ADDRESS']
+BCC_ADDRESS  = tuple(buf.split(','))
 
 #CHARSET      = "ISO-2022-JP"
 CHARSET      = "utf-8"
@@ -52,7 +53,7 @@ def html_mailing(subject, html, to=omit):
         to = TO_ADDRESS
         bcc = BCC_ADDRESS
     elif to == 'debug':
-        to = TO_ADDRESS[:1]
+        to = (os.environ['TO_ADDRESS'],)
         bcc = ()
 
     if html != '':

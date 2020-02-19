@@ -36,13 +36,11 @@ class Nature(JournalTemplate):
         abstract = re.sub(r'\s+\.', ".", abstract)
         abstract = re.sub(r'\s+\,', ",", abstract)
 
-        abstract = re.sub(r',.', ".", abstract)
+        abstract = re.sub(r',\.', ".", abstract)
 
         return abstract
 
 class NatureImmunology(Nature):
-
-    crawling_delay = 3
         
     journal_name = 'Nature_Immunology'
     
@@ -50,7 +48,6 @@ class NatureImmunology(Nature):
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
 
 class NatureMedicine(Nature):
-    crawling_delay = 3
         
     journal_name = 'Nature_Medicine'
     
@@ -58,7 +55,6 @@ class NatureMedicine(Nature):
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
 
 class NatureCancer(Nature):
-    crawling_delay = 3
         
     journal_name = 'Nature_Cancer'
     
@@ -66,7 +62,6 @@ class NatureCancer(Nature):
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
 
 class NatureMethods(Nature):
-    crawling_delay = 3
         
     journal_name = 'Nature_Methods'
     
@@ -74,7 +69,6 @@ class NatureMethods(Nature):
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
 
 class NatureReviewsImmunology(Nature):
-    crawling_delay = 3
         
     journal_name = 'Nature_Reviews_Immunology'
     
@@ -82,9 +76,19 @@ class NatureReviewsImmunology(Nature):
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
 
 class ScientificReports(Nature):
-    crawling_delay = 3
         
     journal_name = 'Scientific_Reports'
+
+    pat_title        = r'<img[^>]+?>([\s\S]+?)</a>'
     
-    latest_articles_url = '/srep/articles'
+    latest_articles_url = '/subjects/immunology/srep'
+    sql_database_path = 'database/{}.sqlite'.format(journal_name)
+
+class NatureCommunications(Nature):
+        
+    journal_name = 'Nature_Communications'
+
+    pat_title        = r'<img[^>]+?>([\s\S]+?)</a>'
+    
+    latest_articles_url = '/subjects/immunology/ncomms'
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
