@@ -78,8 +78,6 @@ class NatureReviewsImmunology(Nature):
 class ScientificReports(Nature):
         
     journal_name = 'Scientific_Reports'
-
-    pat_title        = r'<img[^>]+?>([\s\S]+?)</a>'
     
     latest_articles_url = '/subjects/immunology/srep'
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
@@ -87,8 +85,6 @@ class ScientificReports(Nature):
 class NatureCommunications(Nature):
         
     journal_name = 'Nature_Communications'
-
-    pat_title        = r'<img[^>]+?>([\s\S]+?)</a>'
     
     latest_articles_url = '/subjects/immunology/ncomms'
     sql_database_path = 'database/{}.sqlite'.format(journal_name)

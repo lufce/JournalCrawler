@@ -65,7 +65,7 @@ class JournalTemplate:
         #### This method may be overrided for each journals
 
         #delete html tag
-        text = re.sub(r'<.+?>', "" , text)
+        text = re.sub(r'<[^>]+?>', "" , text)
 
         #replace newline with space
         text = re.sub(r'\n', " ", text)
