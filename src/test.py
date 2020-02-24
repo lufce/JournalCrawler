@@ -1,5 +1,2 @@
-a = 'a,b,c,d'
-e = 'e'
-ae = a+','+e
-t = tuple(ae.split(','))
-print(t)
+t = (True, False, True)
+print(t.count(True))

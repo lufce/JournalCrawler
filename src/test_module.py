@@ -19,7 +19,7 @@ logging.basicConfig(filename='log/{}.log'.format(now),level=logging.INFO, format
 
 logging.info('Crawling Starts.')
 
-journal_list = [NatureCommunications(), ScientificReports()]
+journal_list = [ScientificReports()]
 journal_card_list = []
 contents_list_card = ''
 

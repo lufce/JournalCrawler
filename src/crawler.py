@@ -23,7 +23,7 @@ journal_list = [Nature(), NatureImmunology(), NatureMedicine(), NatureMethods(),
                 Cell(), CancerCell(), Immunity(), \
                 JournalOfExperimentalMedicine(), \
                 JournalOfImmunology(), \
-                Science(), ScientificReports()]
+                Science(), NatureCommunications(), ScientificReports()]
 journal_card_list = []
 contents_list_card = ''
 
@@ -64,7 +64,15 @@ journal_cards = arrange_html_table.join_cards(journal_card_list)
 logging.info('Making html mail body')
 html = arrange_html_table.wrap_html_tags(contents_list_card + journal_cards)
 
-logging.info('Sending mails')
-html_mail_send.html_mailing('今朝の新着論文',html)
+new_article_count = 0
+for j in journal_list:
+    new_article_count += j.is_new_article.count(True)
+
+if new_article_count == 0:
+    logging.info('Sending mails')
+    html_mail_send.html_mailing('今朝の新着論文',html,'debug')
+else:
+    logging.info('Sending mails')
+    html_mail_send.html_mailing('今朝の新着論文',html)
 
 logging.info('End')
