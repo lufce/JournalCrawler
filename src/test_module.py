@@ -1,25 +1,14 @@
 from journal_lxml.cell_press import Cell, CancerCell, Immunity
+from journal_lxml.pnas import Pnas
 from journal_re.aaas import Science
 from journal_re.nature_group import *
 from journal_re.rockefeller_university_press import JournalOfExperimentalMedicine
 from journal_re.journal_of_immunology import JournalOfImmunology
 
 import arrange_html_table, my_sqlite, html_mail_send
-import logging, time
-
-##### logging setting
-
-now = time.strftime('%Y%m%d-%H%M')
-
-date_format = '%H:%M:%S'
-log_format = '%(asctime)s| %(message)s'
-logging.basicConfig(filename='log/{}.log'.format(now),level=logging.INFO, format=log_format, datefmt=date_format)
 
 ##### main
-
-logging.info('Crawling Starts.')
-
-journal_list = [ScientificReports()]
+journal_list = [Pnas()]
 journal_card_list = []
 contents_list_card = ''
 
@@ -44,7 +33,7 @@ for j in journal_list:
         contents_list_card = arrange_html_table.make_contents_list_card(j, contents_list_card)
     
     except IndexError:
-        logging.exception('IndexError Occured. html layout may be changed.')
+        print('IndexError Occured. Html layout may be changed in {}.'.format(j.journal_name))
 
 journal_cards = arrange_html_table.join_cards(journal_card_list)
 

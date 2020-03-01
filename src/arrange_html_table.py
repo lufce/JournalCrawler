@@ -23,7 +23,7 @@ def __make_article_card(article, count):
     article_card ='''
     <table width="{width}" border="{border}" cellpadding="{padding}" cellspacing="{spacing}">
         <tr>
-            <td bgcolor="{title_bgcolor}"><font size="{article_line_font_size}">No.{count}&#009&#009{article_type}:{date}</font><br>
+            <td bgcolor="{title_bgcolor}"><font size="{article_line_font_size}">No.{count}&#009&#009<b>{article_type}</b>:{date}</font><br>
             <b><a href="{article_url}">{title_j}</b> {title_e}</a><br>
             <font size="{author_line_font_size}">{authors}</font>
             </td>
@@ -68,13 +68,14 @@ def make_journal_card(journal,article_cards):
         journal_card = '''<table width="{journal_width}" border="{journal_border}" cellpadding="{journal_padding}" cellspacing="{journal_spacing}" bgcolor="{journal_bgcolor}">
         <tr>
             <td>
-                <font size="6"><b>{journal_title} ({count})</b></font></b></font><br>
+                <font size="6"><b>{journal_title} ({count})</b></font></b></font><br>{url}<br>
                 {article_cards}
             </td>
         </tr>
         </table>'''.format(journal_width=__JOURNAL_TABLE_WIDHT, journal_border=__JOURNAL_TABLE_BORDER, \
                     journal_padding=__JOURNAL_TABLE_CELLPAD, journal_spacing=__JOURNAL_TABLE_CELLSPC, count=count, \
-                    journal_bgcolor=__JOURNAL_TABLE_BGCOLOR, journal_title=journal_name, article_cards=article_cards)
+                    journal_bgcolor=__JOURNAL_TABLE_BGCOLOR, journal_title=journal_name, article_cards=article_cards, \
+                    url=journal.journal_url+journal.latest_articles_url)
 
         return journal_card
 

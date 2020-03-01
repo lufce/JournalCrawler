@@ -1,4 +1,5 @@
 from journal_lxml.cell_press import Cell, CancerCell, Immunity
+from journal_lxml.pnas import Pnas
 from journal_re.aaas import Science
 from journal_re.nature_group import *
 from journal_re.rockefeller_university_press import JournalOfExperimentalMedicine
@@ -21,8 +22,7 @@ logging.info('Crawling Starts.')
 
 journal_list = [Nature(), NatureImmunology(), NatureMedicine(), NatureMethods(), NatureReviewsImmunology(), \
                 Cell(), CancerCell(), Immunity(), \
-                JournalOfExperimentalMedicine(), \
-                JournalOfImmunology(), \
+                JournalOfExperimentalMedicine(), JournalOfImmunology(), Pnas()\
                 Science(), NatureCommunications(), ScientificReports()]
 journal_card_list = []
 contents_list_card = ''

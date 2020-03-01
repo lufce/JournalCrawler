@@ -29,7 +29,6 @@ class JournalOfImmunology(JournalTemplate):
         day = day[:-1]
         if len(day) == 1:
             day = '0' + day
-        pass
 
         if   month == 'January':
             month = '01'

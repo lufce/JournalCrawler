@@ -21,7 +21,7 @@ class Science(JournalTemplate):
 
     def format_date(self, date):
     
-        [month, day, year] = date.split()
+        [day, month, year] = date.split()
 
         if   month == 'Jan':
             month = '01'
