@@ -8,7 +8,7 @@ class Pnas(JournalTemplate):
     
     search_mode = 1
     crawling_delay = 10
-    counter_limit = 1
+    #counter_limit = 1
 
     journal_name = 'PNAS'
     journal_url = 'https://www.pnas.org'

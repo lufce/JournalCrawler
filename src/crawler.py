@@ -22,7 +22,7 @@ logging.info('Crawling Starts.')
 
 journal_list = [Nature(), NatureImmunology(), NatureMedicine(), NatureMethods(), NatureReviewsImmunology(), \
                 Cell(), CancerCell(), Immunity(), \
-                JournalOfExperimentalMedicine(), JournalOfImmunology(), Pnas()\
+                JournalOfExperimentalMedicine(), JournalOfImmunology(), Pnas(), \
                 Science(), NatureCommunications(), ScientificReports()]
 journal_card_list = []
 contents_list_card = ''
@@ -41,6 +41,8 @@ for j in journal_list:
         logging.info('Save article info into %s', j.sql_database_path)
         is_new_list = my_sqlite.write_article_info_into_database(j.sql_database_path, j.article_list)
         j.is_new_article = tuple(is_new_list)
+
+        logging.info('New Articles Number: %s', is_new_list.count(True))
 
         logging.info('Getting abstracts')
         j.get_abstract()
