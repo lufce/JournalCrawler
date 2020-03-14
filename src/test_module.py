@@ -1,6 +1,7 @@
 from journal_lxml.cell_press import Cell, CancerCell, Immunity
 from journal_lxml.pnas import Pnas
-from journal_re.aaas import Science
+from journal_lxml.aaas import Science, ScienceImmunology, ScienceTranslationalMedicine, ScienceSignaling
+#from journal_re.aaas import Science
 from journal_re.nature_group import *
 from journal_re.rockefeller_university_press import JournalOfExperimentalMedicine
 from journal_re.journal_of_immunology import JournalOfImmunology
@@ -8,7 +9,7 @@ from journal_re.journal_of_immunology import JournalOfImmunology
 import arrange_html_table, my_sqlite, html_mail_send
 
 ##### main
-journal_list = [Pnas()]
+journal_list = [ScienceSignaling()]
 journal_card_list = []
 contents_list_card = ''
 
