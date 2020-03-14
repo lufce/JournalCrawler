@@ -1,7 +1,7 @@
 from journal_lxml.journal_template import JournalTemplate
 import requests as webs
 import article.article as article_module
-import translation, entity_references
+import translation
 import lxml.html, time, pickle, re, logging
 
 class Pnas(JournalTemplate):
@@ -56,17 +56,7 @@ class Pnas(JournalTemplate):
         return '{}-{}-{}'.format(year, month, day)
     
     def format_abstract(self, abstract):
-        abstract = re.sub(r'\n +<.+?>',"",abstract)
-        abstract = re.sub(r'<.+?>', "", abstract)
-
-        # remove space sequence
-        abstract = re.sub(r'^ +| +$',"",abstract, flags=re.MULTILINE)
-
-        
-        abstract = re.sub(r'-\n|-\r',"-",abstract)
-
-        # remove newline
-        abstract = re.sub(r'\n|\r'," ",abstract)
+        abstract = re.sub(r'<.+?>',"",abstract)
 
         return abstract
 
@@ -154,10 +144,9 @@ class Pnas(JournalTemplate):
                     a.kind = kind_sec[0]
 
                     #get abstract
-                    abstract_sec = html.xpath("//div[@class='section abstract']/p")
-                    
-                    replace_text = entity_references.change_entity_references_to_utf8_in_text(lxml.html.tostring(abstract_sec[0]).decode('utf-8'))
-                    a.abstract_e = self.format_abstract(replace_text)
+                    #abstract_sec = html.xpath("//div[@class='section abstract']/p")
+                    abstract_content = html.xpath("//meta[@name='citation_abstract']/@content")[0]
+                    a.abstract_e = self.format_abstract(abstract_content)
                     a.abstract_j = translation.translation_en_into_ja(a.abstract_e)
                 
                 except webs.exceptions.ConnectTimeout:
