@@ -40,7 +40,8 @@ for j in journal_list:
 
         # judge new item from database
         logging.info('Save article info into %s', j.sql_database_path)
-        is_new_list = my_sqlite.write_article_info_into_database(j.sql_database_path, j.article_list)
+        j.connection = my_sqlite.create_connection(j.sql_database_path)
+        is_new_list = my_sqlite.write_article_info_into_database(j.connection, j.article_list)
         j.is_new_article = tuple(is_new_list)
 
         logging.info('New Articles Number: %s', is_new_list.count(True))
@@ -58,8 +59,16 @@ for j in journal_list:
         
         contents_list_card = arrange_html_table.make_contents_list_card(j, contents_list_card)
     
-    except IndexError:
-        logging.exception('IndexError Occured. html layout may be changed.')
+    except Exception as e:
+        logging.exception(e)
+        j.occured_error = True
+        my_sqlite.close_connection_without_commit(j.connection)
+        j.connection = None
+    
+    else:
+        my_sqlite.close_connection_with_commit(j.connection)
+        j.connection = None
+        logging.info('%s is crawled successfully', j.journal_name)
 
 logging.info('Making journal cards')
 journal_cards = arrange_html_table.join_cards(journal_card_list)

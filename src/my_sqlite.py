@@ -42,7 +42,20 @@ def __previous_yyyymm(date):
     if len(mm) == 1:
         mm = '0' + mm
 
-def write_article_info_into_database(db_path, article_list):
+def create_connection(db_path):
+    connection = sql.connect(db_path)
+    return connection
+
+def close_connection_with_commit(connection):
+    if connection is not None:
+        connection.commit()
+        connection.close()
+
+def close_connection_without_commit(connection):
+    if connection is not None:
+        connection.close()
+
+def write_article_info_into_database(connection, article_list):
     # database schema is (title UNIQUE, urls UNIQUE, article_type TEXT, date TEXT, authors TEXT)
     # dupulication is detected by database integrity error due to UNIQUE item.    
 
@@ -55,7 +68,6 @@ def write_article_info_into_database(db_path, article_list):
     #     #TODO 独自の例外処理
     #     raise Exception
 
-    connection = sql.connect(db_path)
     c = connection.cursor()
 
     for yyyymm in yyyymm_list:
@@ -85,8 +97,9 @@ def write_article_info_into_database(db_path, article_list):
             else:
                 raise Exception
 
-    connection.commit()
-    connection.close()
+    # Do not save the changes until e-mail is sended successfully
+    #connection.commit()
+    #connection.close()
 
     return is_new_contents
 
@@ -161,11 +174,12 @@ def __temp():
 
     try:
         #__show_records_in_the_table(con, 'T_')
-        #__show_records_in_the_sqlite_master(con)
+        __show_records_in_the_sqlite_master(con)
         #__show_records_at_the_date(con,'2020-03-13')
-        __rename_table_name(con, 'T_', 'T_202003')
+        #__rename_table_name(con, 'T_', 'T_202003')
     finally:
         con.close()
+
 
 
 

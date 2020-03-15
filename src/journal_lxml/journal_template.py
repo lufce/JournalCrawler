@@ -5,6 +5,10 @@ class JournalTemplate:
     # なのでTupleにしている。
     article_list = ()
     is_new_article = ()
+    occured_error = False
+
+    #sqliteを操作するためのコネクション
+    connection = None
 
     # set -1 for getting articles unlimitedly
     counter_limit = -1

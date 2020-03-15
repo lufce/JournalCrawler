@@ -79,7 +79,8 @@ class Science(JournalTemplate):
             # get item sections
             title_sec  = a_sec.xpath("./div/h3/a/div")
             author_sec = a_sec.xpath(".//span[@class='highwire-citation-authors']/span/text()")
-            url_sec    = a_sec.xpath(".//a[@class='highwire-cite-linked-title']/@href")
+            #url_sec    = a_sec.xpath(".//a[@class='highwire-cite-linked-title']/@href")
+            url_sec    = a_sec.xpath(".//a[@class='hiwire-cite-linked-title']/@href")
             date_sec   = a_sec.xpath(".//time/text()")
 
             # get items
