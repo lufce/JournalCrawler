@@ -6,7 +6,7 @@ import lxml.html, time, pickle, re, logging
 
 class Cell(JournalTemplate):
     
-    search_mode = 1
+    counter_limit = 3
 
     journal_name = 'Cell'
     journal_url = 'https://www.cell.com'
@@ -15,6 +15,10 @@ class Cell(JournalTemplate):
 
     def format_date(self, date):
         
+        if 'First published' in date:
+            #delete 'First published:'
+            date = date[16:]
+
         [month, day, year] = date.split()
         day = day[:2]
 
@@ -91,6 +95,7 @@ class Cell(JournalTemplate):
                 title_sec  = a_sec.xpath(".//h3[@class='toc__item__title']/a")
                 author_sec = a_sec.xpath(".//ul[@class='toc__item__authors loa rlist--inline']/li/text()")
                 kind_sec   = a_sec.xpath(".//div[@class='toc__item__type']/text()")
+                date_sec   = a_sec.xpath(".//div[@class='toc__item__date']/text()")
 
                 # get items
                 buf_str = lxml.html.tostring(title_sec[0]).decode('utf-8')
@@ -101,6 +106,7 @@ class Cell(JournalTemplate):
                 a.url     = title_sec[0].values()[0]
                 a.authors = ' '.join(author_sec)
                 a.kind    = kind_sec[0]
+                a.date    = self.format_date(date_sec[0])
 
                 # translation
                 a.title_j = translation.translation_en_into_ja(a.title_e)
@@ -141,10 +147,6 @@ class Cell(JournalTemplate):
                     page.encoding = page.apparent_encoding
                     logging.info('end get method')
                     html = lxml.html.fromstring(page.content)
-
-                    #get publish date
-                    date_sec = html.xpath("//span[@class='article-header__publish-date__value']/text()")
-                    a.date = self.format_date(date_sec[0])
 
                     #get abstract
                     if a.kind == 'Primer' or a.kind == 'Review':
