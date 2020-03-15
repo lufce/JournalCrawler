@@ -9,7 +9,7 @@ class Science(JournalTemplate):
     crawling_delay = 10
     #counter_limit = 1
 
-    journal_name = 'Science_Immunology'
+    journal_name = 'Science'
     journal_url = 'https://science.sciencemag.org/'
     latest_articles_url = ''
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
@@ -158,7 +158,7 @@ class ScienceImmunology(Science):
     crawling_delay = 10
     #counter_limit = 5
 
-    journal_name = 'Science'
+    journal_name = 'Science_Immunology'
     journal_url = 'https://immunology.sciencemag.org'
     latest_articles_url = ''
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
