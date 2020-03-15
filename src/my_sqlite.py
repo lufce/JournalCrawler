@@ -98,5 +98,77 @@ def __test_write_article_info_into_database():
 
     write_article_info_into_database(db_path, article_list)
 
+def __search_records_by_date(cur, date):
+    
+    pass
+
+# =======================for debug or test =============================
+def __show_records_in_the_table(con, table_name):
+    cur = con.cursor()
+    for rec in cur.execute("select * from {}".format(table_name)):
+        print(rec)
+    cur.close()
+
+def __show_records_in_the_sqlite_master(con):
+    cur = con.cursor()
+    for c in cur.execute("select * from sqlite_master"):
+        print(c)
+    cur.close()
+
+def __show_records_at_the_date(con, date):
+    #yyyy-mm-dd is required as data fromat.
+    date_list = date.split('-')
+    
+    # check date format
+    if len(date_list) != 3:
+        print('invalid date fromat')
+        return
+    
+    is_invalid = False
+    for num in date_list:
+        if num.isdecimal() == False:
+            print('{} is not decimal'.format(num))
+            is_invalid = True
+    
+    if is_invalid:
+        return
+
+    cur = con.cursor()
+    tuple_date = (date,)
+    yyyymm = date_list[0] + date_list[1]
+    for rec in cur.execute('select * from T_{yyyymm} where date = ?'.format(yyyymm = yyyymm), tuple_date):
+        print(rec)
+    
+    cur.close()
+    
+    print(date_list)
+
+def __rename_table_name(con, old_name, new_name):
+    
+    __show_records_in_the_sqlite_master(con)
+
+    cur = con.cursor()
+    order = 'alter table {old} rename to {new}'.format(old = old_name, new = new_name)
+    cur.execute(order)
+    cur.close()
+
+    print("")
+    __show_records_in_the_sqlite_master(con)
+
+def __temp():
+    db_path = 'database/Immunity.sqlite'
+    con = sql.connect(db_path)
+
+    try:
+        #__show_records_in_the_table(con, 'T_')
+        #__show_records_in_the_sqlite_master(con)
+        #__show_records_at_the_date(con,'2020-03-13')
+        __rename_table_name(con, 'T_', 'T_202003')
+    finally:
+        con.close()
+
+
+
 if __name__ == '__main__':
-    __test_write_article_info_into_database()
+    #__test_write_article_info_into_database()
+    __temp()

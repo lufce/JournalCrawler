@@ -1,6 +1,12 @@
-import re
+date = 'First published:March 12, 2020'
 
-a = '<p>a</p>'
+if 'First published' in date:
+    #delete 'First published:'
+    date = date[16:]
 
-b = re.sub(r'<.+?>','',a)
-print(b)
+[month, day, year] = date.split()
+day = day[:2]
+
+print(month)
+print(day)
+print(year)
