@@ -4,6 +4,12 @@ import article.article as article_module
 import translation
 import lxml.html, time, pickle, re, logging
 
+accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+accept_enc = 'gzip, deflate, br'
+accept_lang = 'ja,en-US;q=0.9,en;q=0.8,pt;q=0.7'
+ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'
+hds = {'Accept':accept,'Accept-Encoding':accept_enc,'Accept-Language':accept_lang,'User-Agent': ua}
+
 class Science(JournalTemplate):
 
     crawling_delay = 10
@@ -66,7 +72,7 @@ class Science(JournalTemplate):
         ###### get article items 
         html = lxml.html.fromstring(page.content)
 
-        article_section1 = html.xpath("//ul[@class='issue-toc item-list']")
+        article_section1 = html.xpath(".//ul[@class='issue-toc item-list']")
         article_section2 = article_section1[0].xpath(".//article")
         article_list_buf = []
         counter = 0
@@ -159,7 +165,7 @@ class ScienceImmunology(Science):
     #counter_limit = 5
 
     journal_name = 'Science_Immunology'
-    journal_url = 'https://immunology.sciencemag.org'
+    journal_url = 'https://immunology.sciencemag.org/'
     latest_articles_url = ''
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
 

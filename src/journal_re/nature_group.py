@@ -68,6 +68,13 @@ class NatureMethods(Nature):
     latest_articles_url = '/nmeth/research'
     sql_database_path = 'database/{}.sqlite'.format(journal_name)
 
+class NatureProtocols(Nature):
+        
+    journal_name = 'Nature_Protocols'
+    
+    latest_articles_url = '/nprot/research'
+    sql_database_path = 'database/{}.sqlite'.format(journal_name)
+
 class NatureReviewsImmunology(Nature):
         
     journal_name = 'Nature_Reviews_Immunology'

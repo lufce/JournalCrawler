@@ -20,7 +20,7 @@ logging.basicConfig(filename='log/{}.log'.format(now),level=logging.INFO, format
 
 logging.info('Crawling Starts.')
 
-journal_list = [Nature(), NatureImmunology(), NatureMedicine(), NatureMethods(), NatureReviewsImmunology(), \
+journal_list = [Nature(), NatureImmunology(), NatureMedicine(), NatureMethods(), NatureProtocols(), NatureReviewsImmunology(), \
                 Cell(), CancerCell(), Immunity(), \
                 JournalOfExperimentalMedicine(), JournalOfImmunology(), Pnas(), \
                 Science(),ScienceImmunology(), ScienceSignaling(), ScienceTranslationalMedicine(), \
@@ -77,8 +77,15 @@ logging.info('Making html mail body')
 html = arrange_html_table.wrap_html_tags(contents_list_card + journal_cards)
 
 new_article_count = 0
+error_message = 'Error List\n'
 for j in journal_list:
     new_article_count += j.is_new_article.count(True)
+
+    if j.occured_error == True:
+        error_message += '{}\n'.format(j.journal_name)
+
+if len(error_message) != 11:
+    html_mail_send.html_mailing('今朝の新着論文_エラーリスト', error_message, 'debug')
 
 if new_article_count == 0:
     logging.info('Sending mails')

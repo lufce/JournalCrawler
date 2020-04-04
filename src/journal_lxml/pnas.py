@@ -85,16 +85,17 @@ class Pnas(JournalTemplate):
 
         try:
             for a_sec in reversed(article_section):
+            #for a_sec in article_section:
                 a = article_module.Aritcle()
 
                 # get item sections
-                title_sec  = a_sec.xpath(".//span[@class='highwire-cite-title']/text()")
+                title_sec  = a_sec.xpath(".//span[@class='highwire-cite-title']")
                 author_sec = a_sec.xpath(".//span[@class='highwire-citation-authors']/span/text()")
                 url_sec    = a_sec.xpath(".//a[@class='highwire-cite-linked-title']/@href")
                 date_sec   = a_sec.xpath(".//span[@class='highwire-cite-metadata-papdate highwire-cite-metadata']/text()")
 
                 # get items
-                a.title_e = title_sec[0]
+                a.title_e = ''.join(title_sec[0].itertext())
                 a.url     = url_sec[0]
                 a.authors = ', '.join(author_sec)
                 a.date    = self.format_date(date_sec[0])
