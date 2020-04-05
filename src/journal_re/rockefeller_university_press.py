@@ -14,7 +14,7 @@ class JournalOfExperimentalMedicine(JournalTemplate):
     pat_title        = r'<div class="widget-dynamic-journal-title">[^>]+?([\s\S]+?)</a>'
     pat_url          = r'<a href="(.+?)">'
     pat_article_kind = r'<div class="widget-dynamic-journal-categories">([\s\S]+?)</div>'
-    pat_publish_date = r'<div class="widget-dynamic-journal-article-date">([\s\S]+?)</div>'
+    pat_publish_date = r'<div class="widget-dynamic-journal-article-date">[\s\S]+?</span>([\s\S]+?)</div>'
     pat_authors      = r'<div class="widget-dynamic-journal-authors">([\s\S]+?)</div>'
     pat_abstract     = r'<section class="abstract"><p>([\s\S]+?)</p></section>'
 

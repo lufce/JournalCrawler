@@ -9,7 +9,7 @@ from journal_re.journal_of_immunology import JournalOfImmunology
 import arrange_html_table, my_sqlite, html_mail_send
 
 ##### main
-journal_list = [Pnas()]
+journal_list = [JournalOfExperimentalMedicine()]
 journal_card_list = []
 contents_list_card = ''
 
